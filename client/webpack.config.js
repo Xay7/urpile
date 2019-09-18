@@ -1,3 +1,5 @@
+/*eslint-disable */
+
 const path = require("path");
 const fs = require("fs");
 const webpack = require("webpack");
@@ -7,6 +9,8 @@ const TerserPlugin = require("terser-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const dotenv = require("dotenv");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+const FriendlyErrorsWebpackPlugin = require("friendly-errors-webpack-plugin");
 
 module.exports = (env, argv) => {
   const isDevelopment = argv.mode === "development";
@@ -27,21 +31,32 @@ module.exports = (env, argv) => {
     entry: "./src/index.tsx",
     output: {
       path: path.resolve(__dirname, "build"),
-      filename: isDevelopment
-        ? "static/js/[name].bundle.js"
-        : "static/js/[name].[chunkhash].bundle.js",
-      chunkFilename: isDevelopment
-        ? "static/js/[name].bundle.js"
-        : "static/js/[name].[chunkhash].bundle.js"
+      filename: isDevelopment ? "static/js/[name].bundle.js" : "static/js/[name].[chunkhash].bundle.js",
+      chunkFilename: isDevelopment ? "static/js/[name].bundle.js" : "static/js/[name].[chunkhash].bundle.js"
     },
     resolve: {
-      extensions: [".ts", ".tsx", ".js", ".jsx"]
+      extensions: [".ts", ".tsx", ".js", ".jsx"],
+      alias: { "react-dom": "@hot-loader/react-dom" }
     },
     module: {
       rules: [
         {
+          enforce: "pre",
+          test: /\.tsx$/,
+          exclude: /node_modules/,
+          loader: "eslint-loader"
+        },
+        {
           test: /\.tsx?$/,
-          loader: "ts-loader"
+          use: {
+            loader: "babel-loader",
+            options: {
+              cacheDirectory: true,
+              babelrc: false,
+              presets: ["@babel/preset-env", "@babel/preset-typescript", "@babel/preset-react"],
+              plugins: [["@babel/plugin-proposal-class-properties", { loose: true }], "react-hot-loader/babel"]
+            }
+          }
         },
         {
           test: /\.css$/,
@@ -54,6 +69,18 @@ module.exports = (env, argv) => {
               }
             },
             "css-loader"
+          ]
+        },
+        {
+          test: /\.(png|jpg|gif)$/,
+          use: [
+            {
+              loader: "url-loader",
+              options: {
+                limit: 8192,
+                name: "static/media/[name].[hash:8].[ext]"
+              }
+            }
           ]
         }
       ]
@@ -75,6 +102,8 @@ module.exports = (env, argv) => {
       }
     },
     plugins: [
+      // Type checking since babel doesn't do that
+      new ForkTsCheckerWebpackPlugin(),
       // Makes html great again
       new HtmlWebpackPlugin({
         template: "./public/index.html",
@@ -101,25 +130,20 @@ module.exports = (env, argv) => {
         chunkFilename: "static/css/[name].[contenthash:8].chunk.css"
       }),
       // Sets env variables for our client
-      new webpack.DefinePlugin(envKeys)
+      new webpack.DefinePlugin(envKeys),
+      isDevelopment &&
+        new FriendlyErrorsWebpackPlugin({
+          compilationSuccessInfo: {
+            messages: ["Client running on localhost:3000"]
+          }
+        })
       // Removes falsy entries from array
     ].filter(Boolean),
     devServer: {
-      compress: true,
       port: 3000,
-      quiet: false,
-      noInfo: false,
-      stats: {
-        children: false,
-        chunks: false,
-        chunkModules: false,
-        colors: true,
-        entrypoints: false,
-        hash: false,
-        modules: false,
-        timings: false,
-        version: false
-      }
+      compress: true,
+      hot: true,
+      quiet: true
     }
   };
 };
