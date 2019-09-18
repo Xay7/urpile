@@ -1,19 +1,13 @@
 import React from "react";
+import Navbar from "./components/Navbar/Navbar";
+import { hot } from "react-hot-loader/root";
 
 const App: React.FC = () => {
   return (
-    <div>
-      <form action="http://localhost:3001/users/login" method="POST">
-        <input type="email" name="email" />
-        <input type="password" name="password" />
-        <input type="checkbox" checked={true} name="remember" />
-        <input type="submit" />
-      </form>
-      <form action="http://localhost:3001/users/logout" method="POST">
-        <input type="submit" />
-      </form>
-    </div>
+    <>
+      <Navbar />
+    </>
   );
 };
 
-export default App;
+export default hot(App);
