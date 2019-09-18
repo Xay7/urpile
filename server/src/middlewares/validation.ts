@@ -6,11 +6,11 @@ export const validateBody = (schema: Schema) => {
     console.log(req.body);
     const result = schema.validate(req.body);
     if (result.error) {
-      let error = "Unknown error";
+      let errorMessage = "Unknown error";
       if (result.error.details[0].context!.label) {
-        error = result.error.details[0].context!.label;
+        errorMessage = result.error.details[0].context!.label;
       }
-      return res.status(401).send(error);
+      return res.status(401).send(errorMessage);
     }
     next();
   };
@@ -18,6 +18,7 @@ export const validateBody = (schema: Schema) => {
 
 export const validateSession: RequestHandler = (req, res, next) => {
   if (req.session!.user) {
+    // Return some user data
     return res.status(200).send("ok");
   }
   next();
