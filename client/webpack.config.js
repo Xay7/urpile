@@ -82,6 +82,10 @@ module.exports = (env, argv) => {
               }
             }
           ]
+        },
+        {
+          test: /\.svg$/,
+          use: ["@svgr/webpack", "url-loader"]
         }
       ]
     },
@@ -135,7 +139,8 @@ module.exports = (env, argv) => {
         new FriendlyErrorsWebpackPlugin({
           compilationSuccessInfo: {
             messages: ["Client running on localhost:3000"]
-          }
+          },
+          clearConsole: true
         })
       // Removes falsy entries from array
     ].filter(Boolean),
@@ -143,7 +148,8 @@ module.exports = (env, argv) => {
       port: 3000,
       compress: true,
       hot: true,
-      quiet: true
+      quiet: true,
+      clientLogLevel: "silent"
     }
   };
 };
