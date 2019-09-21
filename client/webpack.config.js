@@ -54,7 +54,12 @@ module.exports = (env, argv) => {
               cacheDirectory: true,
               babelrc: false,
               presets: ["@babel/preset-env", "@babel/preset-typescript", "@babel/preset-react"],
-              plugins: [["@babel/plugin-proposal-class-properties", { loose: true }], "react-hot-loader/babel"]
+              plugins: [
+                "@babel/plugin-transform-runtime",
+                "@babel/plugin-proposal-class-properties",
+                "@babel/proposal-object-rest-spread",
+                "react-hot-loader/babel"
+              ]
             }
           }
         },
@@ -64,8 +69,7 @@ module.exports = (env, argv) => {
             {
               loader: MiniCssExtractPlugin.loader,
               options: {
-                hmr: isDevelopment,
-                reloadAll: true
+                hmr: isDevelopment
               }
             },
             "css-loader"
@@ -130,8 +134,8 @@ module.exports = (env, argv) => {
       isProduction && new CleanWebpackPlugin(),
       // Makes separate folder for css files
       new MiniCssExtractPlugin({
-        filename: "static/css/[name].[contenthash:8].css",
-        chunkFilename: "static/css/[name].[contenthash:8].chunk.css"
+        filename: "static/css/[name].css",
+        chunkFilename: "static/css/[name].chunk.css"
       }),
       // Sets env variables for our client
       new webpack.DefinePlugin(envKeys),
@@ -149,7 +153,8 @@ module.exports = (env, argv) => {
       compress: true,
       hot: true,
       quiet: true,
-      clientLogLevel: "silent"
+      clientLogLevel: "silent",
+      historyApiFallback: true
     }
   };
 };
