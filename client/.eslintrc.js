@@ -24,6 +24,7 @@ module.exports = {
   // `typescript-eslint`, as some rules such as `no-array-constructor` aren't compatible.
   rules: {
     // http://eslint.org/docs/rules/
+    "react/prop-types": 0,
     "array-callback-return": "warn",
     "default-case": ["warn", { commentPattern: "^no default$" }],
     "dot-location": ["warn", "property"],
@@ -245,6 +246,12 @@ module.exports = {
       {
         args: "none",
         ignoreRestSiblings: true
+      }
+    ],
+    "@typescript-eslint/explicit-function-return-type": [
+      "error",
+      {
+        allowExpressions: true
       }
     ],
     "no-useless-constructor": "off",
