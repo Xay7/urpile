@@ -6,8 +6,11 @@ import cors from "cors";
 import dotenv from "dotenv";
 import UserRouter from "./routes/users";
 import expressSession from "express-session";
+import pgSession from "connect-pg-simple";
+import { pool } from "./db/db";
 
 const app = express();
+const postgresSession = pgSession(expressSession);
 
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 app.use(bodyParser.json());
@@ -19,14 +22,21 @@ app.use(
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: "http://localhost:3000"
+    origin: "http://localhost:3000",
+    credentials: true
   })
 );
 app.use(
   expressSession({
     secret: process.env.EXPRESS_SECRET as string,
-    resave: false,
-    saveUninitialized: true
+    resave: true,
+    saveUninitialized: false,
+    rolling: true,
+    name: "SID",
+    store: new postgresSession({
+      pool: pool,
+      tableName: "session"
+    })
   })
 );
 
