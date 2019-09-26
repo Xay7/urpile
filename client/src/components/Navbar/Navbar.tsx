@@ -1,8 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import logo from "../../assets/logo.svg";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 
-const Navbar: React.FC = () => {
+const Navbar: React.FC<RouteComponentProps> = props => {
   return (
     <StyledNavbar>
       <List>
@@ -12,8 +13,8 @@ const Navbar: React.FC = () => {
         <Item>Best</Item>
       </List>
       <List>
-        <Item>Register</Item>
-        <Item>Login</Item>
+        <Item onClick={() => props.history.push("/register")}>Register</Item>
+        <Item onClick={() => props.history.push("/login")}>Login</Item>
       </List>
     </StyledNavbar>
   );
@@ -43,9 +44,10 @@ const List = styled.ul`
 
 const Item = styled.li`
   padding: 1rem;
+  font-size: 1.6rem;
   &:hover {
     cursor: pointer;
   }
 `;
 
-export default Navbar;
+export default withRouter(Navbar);
