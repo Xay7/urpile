@@ -1,14 +1,10 @@
 import { Pool, QueryResult } from "pg";
 
-const pool = new Pool();
+export const pool = new Pool();
 
 interface Query {
   query: {
-    (
-      text: string,
-      values?: any[],
-      callback?: (err: Error, result: QueryResult) => void
-    ): any;
+    (text: string, values?: any[], callback?: (err: Error, result: QueryResult) => void): any;
   };
 }
 

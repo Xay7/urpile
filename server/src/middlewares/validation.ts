@@ -1,9 +1,9 @@
 import Joi, { Schema } from "@hapi/joi";
 import { Request, Response, NextFunction, RequestHandler } from "express";
+import db from "../db/db";
 
 export const validateBody = (schema: Schema) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.body);
     const result = schema.validate(req.body);
     if (result.error) {
       let errorMessage = "Unknown error";
@@ -16,11 +16,15 @@ export const validateBody = (schema: Schema) => {
   };
 };
 
-export const validateSession: RequestHandler = (req, res, next) => {
-  if (req.session!.user) {
-    // Return some user data
-    return res.status(200).send("ok");
+export const validateSession: RequestHandler = async (req, res, next) => {
+  if (!req.session!.userID) {
+    return res.status(400).send("Unauthorized");
   }
+  const { rows } = await db.query("SELECT id FROM users WHERE id = $1", [req.session!.userID]);
+  if (!rows.length) {
+    return res.status(400).send("Unauthorized");
+  }
+  // Session is valid, proceed
   next();
 };
 
@@ -51,6 +55,6 @@ export const schemas = {
       .email()
       .required()
       .label("Invalid email"),
-    remember: Joi.string().required()
+    remember: Joi.boolean()
   })
 };
