@@ -16,7 +16,7 @@ const Login: React.FC<RouteComponentProps> = props => {
 
     try {
       await axios.post("/users/login", { email, password, remember: checkboxChecked });
-      props.history.push("/");
+      props.history.push("/dashboard");
     } catch (error) {
       console.log(error);
     }
@@ -24,19 +24,28 @@ const Login: React.FC<RouteComponentProps> = props => {
 
   return (
     <StyledLogin>
-      <Header>Login</Header>
-      <Form onSubmit={formHandler}>
-        <Input type="email" placeholder="Email" />
-        <Input type="password" placeholder="Password" />
-        <Checkbox isChecked={checkboxChecked} handleChange={() => setCheckboxChecked(!checkboxChecked)} />
-        <Button>Login</Button>
-      </Form>
+      <Container>
+        <Header>Login</Header>
+        <Form onSubmit={formHandler}>
+          <Input type="email" placeholder="Email" />
+          <Input type="password" placeholder="Password" />
+          <Checkbox isChecked={checkboxChecked} handleChange={() => setCheckboxChecked(!checkboxChecked)} />
+          <Button>Login</Button>
+        </Form>
+      </Container>
     </StyledLogin>
   );
 };
 
 const StyledLogin = styled.div`
-  height: 500px;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const Container = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: column;

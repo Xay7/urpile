@@ -1,30 +1,29 @@
 import React from "react";
 import styled from "styled-components";
 import logo from "../../assets/logo.svg";
-import { withRouter, RouteComponentProps } from "react-router-dom";
 
-const Navbar: React.FC<RouteComponentProps> = props => {
+const Navbar: React.FC = props => {
   return (
     <StyledNavbar>
       <List>
         <Logo src={logo} />
-        <Item>All</Item>
-        <Item>Top</Item>
-        <Item>Best</Item>
-      </List>
-      <List>
-        <Item onClick={() => props.history.push("/register")}>Register</Item>
-        <Item onClick={() => props.history.push("/login")}>Login</Item>
+        <Item>Notes</Item>
+        <Item>Todo</Item>
+        <Item>Calendar</Item>
+        <Item>Passwords</Item>
       </List>
     </StyledNavbar>
   );
 };
 
 const StyledNavbar = styled.nav`
-  height: 54px;
+  position: fixed;
+  height: calc(100vh - 100px);
+  padding: 50px 0;
+  width: 240px;
   background-color: yellow;
-  padding: 0 160px;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
 `;
@@ -36,10 +35,12 @@ const Logo = styled.img`
 
 const List = styled.ul`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   list-style-type: none;
   margin: 0;
+  padding: 0;
 `;
 
 const Item = styled.li`
@@ -50,4 +51,4 @@ const Item = styled.li`
   }
 `;
 
-export default withRouter(Navbar);
+export default Navbar;

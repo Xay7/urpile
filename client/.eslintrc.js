@@ -248,12 +248,7 @@ module.exports = {
         ignoreRestSiblings: true
       }
     ],
-    "@typescript-eslint/explicit-function-return-type": [
-      "error",
-      {
-        allowExpressions: true
-      }
-    ],
+    "@typescript-eslint/explicit-function-return-type": "off",
     "no-useless-constructor": "off",
     "@typescript-eslint/no-useless-constructor": "warn"
   }

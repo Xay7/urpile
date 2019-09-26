@@ -33,6 +33,10 @@ app.use(
     saveUninitialized: false,
     rolling: true,
     name: "SID",
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true
+    },
     store: new postgresSession({
       pool: pool,
       tableName: "session"
