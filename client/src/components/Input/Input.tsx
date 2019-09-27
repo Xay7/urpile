@@ -4,10 +4,11 @@ import styled from "styled-components";
 interface Props {
   type: string;
   placeholder?: string;
+  autoComplete?: string;
 }
 
 const Input: React.FC<Props> = props => {
-  return <StyledInput type={props.type} />;
+  return <StyledInput type={props.type} placeholder={props.placeholder} autoComplete={props.autoComplete} />;
 };
 
 const StyledInput = styled.input`

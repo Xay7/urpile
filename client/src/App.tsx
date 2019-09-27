@@ -1,19 +1,14 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import { hot } from "react-hot-loader/root";
 import { Switch, Route } from "react-router-dom";
 import Login from "./views/Login/Login";
-import axios from "axios";
 import Landing from "./views/Landing/Landing";
 import Dashboard from "./views/Dashboard/Dashboard";
 import Register from "./views/Register/Register";
 import Navbar from "./components/Navbar/Navbar";
 
 const App: React.FC = () => {
-  useEffect(() => {
-    axios.get("/users/dashboard");
-  }, []);
-
   return (
     <>
       <Switch>

@@ -27,8 +27,8 @@ const Login: React.FC<RouteComponentProps> = props => {
       <Container>
         <Header>Login</Header>
         <Form onSubmit={formHandler}>
-          <Input type="email" placeholder="Email" />
-          <Input type="password" placeholder="Password" />
+          <Input type="email" placeholder="Email" autoComplete="on" />
+          <Input type="password" placeholder="Password" autoComplete="on" />
           <Checkbox isChecked={checkboxChecked} handleChange={() => setCheckboxChecked(!checkboxChecked)} />
           <Button>Login</Button>
         </Form>
