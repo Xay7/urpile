@@ -13,13 +13,15 @@ const Login: React.FC<RouteComponentProps> = props => {
     e.preventDefault();
     const email = (e.currentTarget[0] as HTMLInputElement).value;
     const password = (e.currentTarget[1] as HTMLInputElement).value;
+    const remember = (e.currentTarget[2] as HTMLInputElement).checked;
 
     try {
-      await axios.post("/users/login", { email, password, remember: checkboxChecked });
+      await axios.post("/users/login", { email, password, remember: remember });
+      if (remember) {
+        localStorage.setItem("remember", "true");
+      }
       props.history.push("/dashboard");
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   return (
