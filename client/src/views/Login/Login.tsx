@@ -4,10 +4,11 @@ import Input from "../../components/Input/Input";
 import Button from "../../components/Button/Button";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import axios from "axios";
-import { RouteComponentProps } from "react-router-dom";
+import { useHistory, RouteComponentProps, Link } from "react-router-dom";
 
 const Login: React.FC<RouteComponentProps> = props => {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
+  const history = useHistory();
 
   const formHandler = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
@@ -20,21 +21,32 @@ const Login: React.FC<RouteComponentProps> = props => {
       if (remember) {
         localStorage.setItem("remember", "true");
       }
-      props.history.push("/dashboard");
+      history.push("/dashboard");
     } catch (error) {}
   };
 
   return (
     <StyledLogin>
       <Container>
-        <Header>Login</Header>
+        <Header>Sign in</Header>
         <Form onSubmit={formHandler}>
           <Input type="email" placeholder="Email" autoComplete="on" />
           <Input type="password" placeholder="Password" autoComplete="on" />
-          <Checkbox isChecked={checkboxChecked} handleChange={() => setCheckboxChecked(!checkboxChecked)} />
-          <Button>Login</Button>
+          <Checkbox
+            checked={checkboxChecked}
+            onChange={() => setCheckboxChecked(!checkboxChecked)}
+            label={"Remember me"}
+          />
+          {props.location.state && props.location.state.registered && <div>Success, you can login.</div>}
+          <Button>Continue</Button>
         </Form>
       </Container>
+      <span style={{ fontSize: "1.3rem", margin: "10px" }}>
+        Don&apos;t have an account?&nbsp;
+        <Link to="/register" style={{ textDecoration: "none", color: "blue" }}>
+          Sign up
+        </Link>
+      </span>
     </StyledLogin>
   );
 };
@@ -52,6 +64,8 @@ const Container = styled.div`
   justify-content: center;
   flex-direction: column;
   align-items: center;
+  background-color: white;
+  box-shadow: ${props => props.theme.shadows["3dp"]};
 `;
 
 const Form = styled.form`
@@ -59,14 +73,16 @@ const Form = styled.form`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 0 30px 24px 30px;
 
-  div {
+  label {
     align-self: flex-start;
   }
 `;
 
 const Header = styled.h3`
   font-size: 2.4rem;
+  margin-bottom: 9px;
 `;
 
 export default Login;
