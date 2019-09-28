@@ -11,16 +11,18 @@ const Button: React.FC<Props> = props => {
 
 const StyledButton = styled.button`
   width: 280px;
-  margin: 5px;
-  height: 50px;
+  margin: 10px;
+  height: 40px;
   border: none;
-  background-color: green;
+  background-color: ${props => props.theme.primary};
   color: white;
-  text-transform: uppercase;
   font-size: 1.8rem;
+  border-radius: 5px;
+  transition: all 150ms;
 
   &:hover {
     cursor: pointer;
+    background-color: #0767b2;
   }
 `;
 
