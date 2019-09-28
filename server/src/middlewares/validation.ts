@@ -40,6 +40,10 @@ export const schemas = {
       .max(4096)
       .required()
       .label("Invalid password"),
+    confirmPassword: Joi.any()
+      .valid(Joi.ref("password"))
+      .required()
+      .label("Invalid confirm password"),
     email: Joi.string()
       .email()
       .required()
