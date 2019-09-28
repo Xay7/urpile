@@ -8,29 +8,6 @@ import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 
 const Register: React.FC = props => {
   const history = useHistory();
-  // const [errors, setErrors] = useState({
-  //   username: {
-  //     valid: true,
-  //     message: ""
-  //   },
-  //   email: {
-  //     valid: true,
-  //     message: ""
-  //   },
-  //   password: {
-  //     valid: true,
-  //     message: ""
-  //   },
-  //   confirmPassword: {
-  //     valid: true,
-  //     message: ""
-  //   },
-  //   server: {
-  //     valid: true,
-  //     message: ""
-  //   }
-  // });
-
   const [errors, setErrors] = useState({
     username: "",
     email: "",
@@ -38,7 +15,6 @@ const Register: React.FC = props => {
     confirmPassword: "",
     server: ""
   });
-
   const [isFormValid, setIsFormValid] = useState(true);
 
   const formHandler = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
@@ -123,7 +99,7 @@ const Register: React.FC = props => {
       </Container>
       <span style={{ fontSize: "1.3rem", margin: "10px" }}>
         Arleady registered?&nbsp;
-        <Link to="/login" style={{ textDecoration: "none", color: "blue" }}>
+        <Link to="/login" style={{ textDecoration: "none", color: "#0984e3" }}>
           Sign in
         </Link>
       </span>
@@ -145,7 +121,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: white;
-  width: 270px;
+  width: 280px;
   padding: 0 30px 24px 30px;
   box-shadow: ${props => props.theme.shadows["3dp"]};
   border-radius: 5px;

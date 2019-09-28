@@ -54,7 +54,7 @@ const Login: React.FC<RouteComponentProps> = props => {
       </Container>
       <span style={{ fontSize: "1.3rem", margin: "10px" }}>
         Don&apos;t have an account?&nbsp;
-        <Link to="/register" style={{ textDecoration: "none", color: "blue" }}>
+        <Link to="/register" style={{ textDecoration: "none", color: "#0984e3" }}>
           Sign up
         </Link>
       </span>

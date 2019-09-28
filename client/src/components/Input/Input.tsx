@@ -6,6 +6,7 @@ interface Props {
   placeholder?: string;
   autoComplete?: string;
   error?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Input: React.FC<Props> = props => {
@@ -16,6 +17,7 @@ const Input: React.FC<Props> = props => {
         placeholder={props.placeholder}
         autoComplete={props.autoComplete}
         error={props.error}
+        onChange={props.onChange}
       />
     </Container>
   );

@@ -19,6 +19,7 @@ const StyledButton = styled.button`
   font-size: 1.8rem;
   border-radius: 5px;
   transition: all 150ms;
+  outline: none;
 
   &:hover {
     cursor: pointer;

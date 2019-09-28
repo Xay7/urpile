@@ -52,9 +52,6 @@ export const login: RequestHandler = async (req, res) => {
     }
     req.session!.userID = rows[0].id;
 
-    // Data we want to send to user after successful authentication
-    console.log(req.session);
-
     return res.status(200).send("Login success");
   } catch (error) {
     return res.status(error.status).send(error.details);
@@ -75,6 +72,5 @@ export const logout: RequestHandler = (req, res) => {
 };
 
 export const dashboard: RequestHandler = (req, res) => {
-  console.log(req.session);
   return res.status(200).send("Ok");
 };
