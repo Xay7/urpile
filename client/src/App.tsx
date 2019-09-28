@@ -1,13 +1,14 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import { hot } from "react-hot-loader/root";
-import { Switch, Route, RouteComponentProps, withRouter } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 import Login from "./views/Login/Login";
 import Landing from "./views/Landing/Landing";
 import Dashboard from "./views/Dashboard/Dashboard";
 import Register from "./views/Register/Register";
 import Navbar from "./components/Navbar/Navbar";
 import axios from "axios";
+import { useHistory } from "react-router-dom";
 
 const App: React.FC = () => {
   return (
@@ -20,19 +21,21 @@ const App: React.FC = () => {
   );
 };
 
-const LandingContainer: React.FC<RouteComponentProps> = props => {
+const LandingContainer: React.FC = props => {
+  const history = useHistory();
+
   useEffect(() => {
     const remember = localStorage.getItem("remember");
     if (remember) {
       try {
         axios.post("/users/dashboard");
         // set isAuthetnicated to true in the store
-        props.history.push("/dashboard");
+        history.push("/dashboard");
       } catch (error) {
         console.log("Invalid session");
       }
     }
-  }, [props.history]);
+  }, [history]);
   return (
     <>
       <Switch>
@@ -58,4 +61,4 @@ const Main = styled.main`
   margin-left: 240px;
 `;
 
-export default hot(withRouter(App));
+export default hot(App);
