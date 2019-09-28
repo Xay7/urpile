@@ -10,7 +10,7 @@ const Button: React.FC<Props> = props => {
 };
 
 const StyledButton = styled.button`
-  width: 280px;
+  width: 100%;
   margin: 10px;
   height: 40px;
   border: none;

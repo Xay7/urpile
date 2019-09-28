@@ -5,9 +5,11 @@ import Button from "../../components/Button/Button";
 import Checkbox from "../../components/Checkbox/Checkbox";
 import axios from "axios";
 import { useHistory, RouteComponentProps, Link } from "react-router-dom";
+import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 
 const Login: React.FC<RouteComponentProps> = props => {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
+  const [error, setError] = useState("");
   const history = useHistory();
 
   const formHandler = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
@@ -22,16 +24,23 @@ const Login: React.FC<RouteComponentProps> = props => {
         localStorage.setItem("remember", "true");
       }
       history.push("/dashboard");
-    } catch (error) {}
+    } catch (error) {
+      let errorMessage = "Something went wrong";
+      if (error.response.data) {
+        errorMessage = error.response.data;
+      }
+      setError(errorMessage);
+    }
   };
 
   return (
     <StyledLogin>
       <Container>
         <Header>Sign in</Header>
+        {error && <ErrorMessage message={error} />}
         <Form onSubmit={formHandler}>
-          <Input type="email" placeholder="Email" autoComplete="on" />
-          <Input type="password" placeholder="Password" autoComplete="on" />
+          <Input type="email" placeholder="Email" autoComplete="on" error={error} />
+          <Input type="password" placeholder="Password" autoComplete="on" error={error} />
           <Checkbox
             checked={checkboxChecked}
             onChange={() => setCheckboxChecked(!checkboxChecked)}
@@ -54,7 +63,7 @@ const Login: React.FC<RouteComponentProps> = props => {
 };
 
 const StyledLogin = styled.div`
-  height: 100vh;
+  height: 100%;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -67,6 +76,8 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: white;
+  padding: 0 30px 24px 30px;
+  width: 280px;
   box-shadow: ${props => props.theme.shadows["3dp"]};
 `;
 
@@ -75,7 +86,7 @@ const Form = styled.form`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0 30px 24px 30px;
+  width: 100%;
 
   label {
     align-self: flex-start;

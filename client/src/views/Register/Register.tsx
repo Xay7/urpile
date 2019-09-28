@@ -4,16 +4,42 @@ import styled from "styled-components";
 import Button from "../../components/Button/Button";
 import axios from "axios";
 import { useHistory, Link } from "react-router-dom";
+import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 
 const Register: React.FC = props => {
   const history = useHistory();
+  // const [errors, setErrors] = useState({
+  //   username: {
+  //     valid: true,
+  //     message: ""
+  //   },
+  //   email: {
+  //     valid: true,
+  //     message: ""
+  //   },
+  //   password: {
+  //     valid: true,
+  //     message: ""
+  //   },
+  //   confirmPassword: {
+  //     valid: true,
+  //     message: ""
+  //   },
+  //   server: {
+  //     valid: true,
+  //     message: ""
+  //   }
+  // });
+
   const [errors, setErrors] = useState({
-    isValid: false,
     username: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
+    server: ""
   });
+
+  const [isFormValid, setIsFormValid] = useState(true);
 
   const formHandler = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
@@ -22,10 +48,11 @@ const Register: React.FC = props => {
     const password = (e.currentTarget[2] as HTMLInputElement).value;
     const confirmPassword = (e.currentTarget[3] as HTMLInputElement).value;
 
-    validate(username, email, password, confirmPassword);
-    if (!errors.isValid) {
+    const isValid = validate(username, email, password, confirmPassword);
+    if (!isValid) {
+      setIsFormValid(false);
       return;
-    }
+    } else setIsFormValid(true);
 
     try {
       await axios.post("/users/register", { username, email, password, confirmPassword });
@@ -34,72 +61,62 @@ const Register: React.FC = props => {
         state: { registered: true }
       });
     } catch (error) {
-      console.log(error.response.data);
+      let errorMessage = "Something went wrong";
+      if (error.response.data) {
+        errorMessage = error.response.data;
+      }
+      setErrors({ ...error, serverError: errorMessage });
     }
   };
 
   const validate = (username: string, email: string, password: string, confirmPassword: string) => {
-    const errors = {
+    const _errors = {
       username: "",
       email: "",
       password: "",
       confirmPassword: "",
-      isValid: true
+      server: ""
     };
 
+    let isValid = true;
     const isEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
       email
     );
 
     if (username.length < 3) {
-      errors.isValid = false;
-      errors.username = "Username must be atleast 3 characters long";
+      isValid = false;
+      _errors.username = "Username must be atleast 3 characters long";
     }
-
     if (!isEmail) {
-      errors.isValid = false;
-      errors.email = "Email must be valid";
+      isValid = false;
+      _errors.email = "Email must be valid";
     }
     if (password.length < 6) {
-      errors.isValid = false;
-      errors.password = "Password must be atleast 6 characters long";
+      isValid = false;
+      _errors.password = "Password must be atleast 6 characters long";
     }
     if (confirmPassword !== password || confirmPassword.length === 0) {
-      errors.isValid = false;
-      errors.confirmPassword = "Passwords must match";
+      isValid = false;
+      _errors.confirmPassword = "Passwords must match";
     }
-    return setErrors(errors);
+    setErrors(_errors);
+    return isValid;
   };
 
   return (
     <StyledRegister>
       <Container>
         <Header>Create account</Header>
+        {!isFormValid && <ErrorMessage message={errors} />}
         <Form onSubmit={formHandler}>
-          <Input
-            type="text"
-            placeholder="Username"
-            error={errors.username ? true : false}
-            errorMessage={errors.username}
-          />
-          <Input
-            type="email"
-            placeholder="Email"
-            error={errors.email ? true : false}
-            errorMessage={errors.email}
-            autoComplete="new-password"
-          />
-          <Input
-            type="password"
-            placeholder="Password"
-            error={errors.password ? true : false}
-            errorMessage={errors.password}
-          />
+          <Input type="text" placeholder="Username" error={errors.username} />
+          <Input type="email" placeholder="Email" error={errors.email} autoComplete="new-password" />
+          <Input type="password" placeholder="Password" error={errors.password} autoComplete="new-password" />
           <Input
             type="password"
             placeholder="Confirm password"
-            error={errors.confirmPassword ? true : false}
-            errorMessage={errors.confirmPassword}
+            error={errors.confirmPassword}
+            autoComplete="new-password"
           />
           <Button>Continue</Button>
         </Form>
@@ -128,6 +145,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: white;
+  width: 270px;
   padding: 0 30px 24px 30px;
   box-shadow: ${props => props.theme.shadows["3dp"]};
   border-radius: 5px;
@@ -139,7 +157,7 @@ const Form = styled.form`
   align-items: center;
   justify-content: center;
   background-color: white;
-
+  width: 100%;
   button {
     margin-top: 24px;
   }

@@ -61,8 +61,8 @@ const StyledCheckbox = styled("div")<any>`
 const Label = styled.label`
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin: 10px;
+  margin: 10px 0;
+  width: 100%;
 `;
 
 const Span = styled.span`
