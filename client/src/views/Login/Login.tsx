@@ -37,8 +37,10 @@ const Login: React.FC<RouteComponentProps> = props => {
             onChange={() => setCheckboxChecked(!checkboxChecked)}
             label={"Remember me"}
           />
-          {props.location.state && props.location.state.registered && <div>Success, you can login.</div>}
           <Button>Continue</Button>
+          {props.location.state && props.location.state.registered && (
+            <RegisterSuccessMessage>Registration complete, you can now login</RegisterSuccessMessage>
+          )}
         </Form>
       </Container>
       <span style={{ fontSize: "1.3rem", margin: "10px" }}>
@@ -83,6 +85,12 @@ const Form = styled.form`
 const Header = styled.h3`
   font-size: 2.4rem;
   margin-bottom: 9px;
+`;
+
+const RegisterSuccessMessage = styled.span`
+  font-size: 1.3rem;
+  color: ${props => props.theme.success};
+  margin-top: 5px;
 `;
 
 export default Login;

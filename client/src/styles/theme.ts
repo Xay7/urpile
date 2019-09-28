@@ -1,6 +1,7 @@
 const theme = {
   main: "mediumseagreen",
   primary: "#0984e3",
+  success: "green",
   error: "#c40000",
   black: "#333",
   shadows: {
