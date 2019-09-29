@@ -26,7 +26,7 @@ const Login: React.FC<RouteComponentProps> = props => {
       history.push("/dashboard");
     } catch (error) {
       let errorMessage = "Something went wrong";
-      if (error.response.data) {
+      if (error.response && error.response.data) {
         errorMessage = error.response.data;
       }
       setError(errorMessage);
@@ -54,7 +54,7 @@ const Login: React.FC<RouteComponentProps> = props => {
       </Container>
       <span style={{ fontSize: "1.3rem", margin: "10px" }}>
         Don&apos;t have an account?&nbsp;
-        <Link to="/register" style={{ textDecoration: "none", color: "#0984e3" }}>
+        <Link to="/dashboard" style={{ textDecoration: "none", color: "#0984e3" }}>
           Sign up
         </Link>
       </span>
