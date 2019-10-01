@@ -120,7 +120,7 @@ const Container = styled.div`
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  background-color: white;
+  background-color: ${props => props.theme.white};
   width: 280px;
   padding: 0 30px 24px 30px;
   box-shadow: ${props => props.theme.shadows["3dp"]};
@@ -132,7 +132,7 @@ const Form = styled.form`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: white;
+  background-color: ${props => props.theme.white};
   width: 100%;
   button {
     margin-top: 24px;

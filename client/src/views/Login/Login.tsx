@@ -39,8 +39,8 @@ const Login: React.FC<RouteComponentProps> = props => {
         <Header>Sign in</Header>
         {error && <ErrorMessage message={error} />}
         <Form onSubmit={formHandler}>
-          <Input type="email" placeholder="Email" autoComplete="on" error={error} />
-          <Input type="password" placeholder="Password" autoComplete="on" error={error} />
+          <Input type="email" placeholder="Email" autoComplete="email" error={error} />
+          <Input type="password" placeholder="Password" autoComplete="password" error={error} />
           <Checkbox
             checked={checkboxChecked}
             onChange={() => setCheckboxChecked(!checkboxChecked)}
@@ -54,7 +54,7 @@ const Login: React.FC<RouteComponentProps> = props => {
       </Container>
       <span style={{ fontSize: "1.3rem", margin: "10px" }}>
         Don&apos;t have an account?&nbsp;
-        <Link to="/dashboard" style={{ textDecoration: "none", color: "#0984e3" }}>
+        <Link to="/register" style={{ textDecoration: "none", color: "#0984e3" }}>
           Sign up
         </Link>
       </span>
@@ -75,7 +75,7 @@ const Container = styled.div`
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  background-color: white;
+  background-color: ${props => props.theme.white};
   padding: 0 30px 24px 30px;
   width: 280px;
   box-shadow: ${props => props.theme.shadows["3dp"]};

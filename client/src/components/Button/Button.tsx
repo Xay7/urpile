@@ -15,7 +15,7 @@ const StyledButton = styled.button`
   height: 40px;
   border: none;
   background-color: ${props => props.theme.primary};
-  color: white;
+  color: ${props => props.theme.white};
   font-size: 1.8rem;
   border-radius: 5px;
   transition: all 150ms;

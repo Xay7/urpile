@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Route, Redirect, RouteProps } from "react-router-dom";
+import { Route, Redirect } from "react-router-dom";
 import axios from "axios";
 
 const authenticate = async () => {
@@ -12,13 +12,14 @@ const authenticate = async () => {
 };
 
 // Use redux for auth
-const PrivateRouteFunctional: React.FC<RouteProps> = ({ component: Component, ...rest }) => {
+const PrivateRouteFunctional: React.FC<any> = ({ component: Component, ...rest }) => {
   const [state, setState] = useState({
     loading: true,
     isAuthenticated: false
   });
-
   useEffect(() => {
+    if (!state.isAuthenticated) {
+    }
     authenticate()
       .then(isAuthenticated => {
         setState({
