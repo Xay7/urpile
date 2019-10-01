@@ -8,6 +8,7 @@ import Dashboard from "./views/Dashboard/Dashboard";
 import Register from "./views/Register/Register";
 import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 import Navbar from "./components/Navbar/Navbar";
+import Passwords from "./views/Passwords/Passwords";
 
 const App: React.FC = () => {
   return (
@@ -32,17 +33,27 @@ const LandingLayout = () => {
 
 const DashboardLayout = () => {
   return (
-    <Switch>
+    <>
       <Navbar />
       <Main>
-        <Route exact path="/dashboard" component={Dashboard} />
+        <Switch>
+          <Route exact path="/dashboard" component={Dashboard} />
+          <Route exact path="/dashboard/notes" component={Dashboard} />
+          <Route exact path="/dashboard/calendar" component={Dashboard} />
+          <Route exact path="/dashboard/passwords" component={Passwords} />
+          <Route exact path="/dashboard/logout" component={Dashboard} />
+        </Switch>
       </Main>
-    </Switch>
+    </>
   );
 };
 
 const Main = styled.main`
+  width: calc(100vw - 240px);
+  height: 100%;
   margin-left: 240px;
+  padding: 50px;
+  box-sizing: border-box;
 `;
 
 export default hot(App);
