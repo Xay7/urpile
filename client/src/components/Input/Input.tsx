@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import styled from "styled-components";
 import { ReactComponent as Copy } from "../../assets/svg/copy.svg";
-import Tooltip from "../../components/Tooltip/Tooltip";
+import Icon from "../../components/Icon/Icon";
 
 interface Props {
   type: string;
@@ -16,7 +16,7 @@ interface Props {
 }
 
 const Input: React.FC<Props> = props => {
-  const textAreaRef = useRef<any>(null);
+  const inputRef = useRef(null);
   const copyToClickboard = () => {
     navigator.clipboard.writeText(props.value ? props.value : "");
   };
@@ -31,9 +31,9 @@ const Input: React.FC<Props> = props => {
         value={props.value}
         border={props.border}
         disabled={props.disabled}
-        ref={textAreaRef}
+        ref={inputRef}
       />
-      {props.copyValue && <CopyIcon onClick={copyToClickboard}></CopyIcon>}
+      {props.copyValue && <Icon name="copy" onClick={copyToClickboard} size="20px" />}
     </Container>
   );
 };
@@ -44,7 +44,7 @@ Input.defaultProps = {
 
 const Container = styled.div`
   width: 100%;
-  margin: 15px 10px 7px 10px;
+  margin: 15px 10px 15px 10px;
   display: flex;
   align-items: center;
   position: relative;

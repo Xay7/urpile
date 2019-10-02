@@ -251,6 +251,7 @@ module.exports = {
     "@typescript-eslint/explicit-function-return-type": "off",
     "no-useless-constructor": "off",
     "@typescript-eslint/no-useless-constructor": "warn",
-    "@typescript-eslint/no-explicit-any": "off"
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-empty-interface": "warn"
   }
 };
