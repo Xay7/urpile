@@ -143,6 +143,7 @@ const Header = styled.h3`
   font-size: 2.4rem;
   margin-bottom: 9px;
   color: ${props => props.theme.black};
+  margin-top: 20px;
 `;
 
 export default Register;

@@ -9,7 +9,7 @@ import { ReactComponent as Dashboard } from "../../assets/svg/dashboard.svg";
 import { ReactComponent as Logout } from "../../assets/svg/logout.svg";
 import { ReactComponent as Cog } from "../../assets/svg/cog.svg";
 import { useHistory } from "react-router-dom";
-import Tooltip from "../../components/Tooltip/Tooltip";
+
 const iconTypes = {
   calendar: Calendar,
   key: Key,
@@ -100,7 +100,6 @@ const List = styled.ul`
   display: flex;
   flex-direction: column;
   list-style-type: none;
-  align-items: center;
   padding: 0;
   margin: 0;
   width: 100%;

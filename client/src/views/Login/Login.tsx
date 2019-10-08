@@ -96,6 +96,7 @@ const Form = styled.form`
 const Header = styled.h3`
   font-size: 2.4rem;
   margin-bottom: 9px;
+  margin-top: 20px;
 `;
 
 const RegisterSuccessMessage = styled.span`

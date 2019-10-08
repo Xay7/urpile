@@ -10,6 +10,8 @@ import { ReactComponent as Key } from "../../assets/svg/key.svg";
 import { ReactComponent as Logout } from "../../assets/svg/logout.svg";
 import { ReactComponent as Notepad } from "../../assets/svg/notepad.svg";
 import { ReactComponent as Check } from "../../assets/svg/check.svg";
+import { ReactComponent as Left } from "../../assets/svg/left.svg";
+import { ReactComponent as Right } from "../../assets/svg/right.svg";
 
 const Icons = {
   calendar: Calendar,
@@ -21,7 +23,9 @@ const Icons = {
   key: Key,
   logout: Logout,
   notepad: Notepad,
-  check: Check
+  check: Check,
+  left: Left,
+  right: Right
 };
 
 interface Props {
@@ -33,7 +37,7 @@ interface Props {
 export const Icon: React.FC<Props> = props => {
   const Icon = Icons[props.name];
   const StyledIcon = styled(Icon)`
-    fill: ${props => props.theme.grey};
+    fill: ${props => props.theme.white};
     border-radius: 50%;
     padding: 10px;
     width: ${props => (props.size ? props.size : "24px")};

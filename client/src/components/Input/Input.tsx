@@ -7,7 +7,7 @@ interface Props {
   type: string;
   placeholder?: string;
   autoComplete?: string;
-  error?: string;
+  error?: string | boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   value?: string;
   border?: boolean;
