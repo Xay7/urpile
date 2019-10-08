@@ -42,41 +42,4 @@ const PrivateRouteFunctional: React.FC<any> = ({ component: Component, ...rest }
     );
 };
 
-class PrivateRoute extends React.Component<any> {
-  state = {
-    loading: true,
-    isAuthenticated: false
-  };
-  componentDidMount() {
-    authenticate()
-      .then(isAuthenticated => {
-        this.setState({
-          loading: false,
-          isAuthenticated
-        });
-      })
-      .catch(() => this.setState({ isAuthenticated: false }));
-  }
-  render() {
-    const { component: Component, ...rest } = this.props;
-    if (this.state.loading) {
-      return <div>LOADING</div>;
-    } else {
-      return (
-        <Route
-          {...rest}
-          render={props => (
-            <div>
-              {!this.state.isAuthenticated && (
-                <Redirect to={{ pathname: "/login", state: { from: this.props.location } }} />
-              )}
-              <Component {...this.props} />
-            </div>
-          )}
-        />
-      );
-    }
-  }
-}
-
 export default PrivateRouteFunctional;
