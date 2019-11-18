@@ -3,9 +3,11 @@ import styled from "styled-components";
 import Input from "../../components/Input/Input";
 import Icon from "../../components/Icon/Icon";
 import Dropdown from "../../components/Dropdown/Dropdown";
+import Button from "../../components/Button/Button";
+import axios from "axios";
 
 const Passwords: React.FC = () => {
-  const passwords = [
+  const [passwords, setPasswords] = useState<any[]>([
     {
       origin: "www.kongregate.com",
       user: "xayeso@gmail.com",
@@ -21,22 +23,52 @@ const Passwords: React.FC = () => {
       user: "xayeso@gmail.com",
       password: "somedots"
     }
-  ];
+  ]);
+  const [disable, setDisabled] = useState(false);
+
+  const addPassword = () => {
+    setPasswords([{ origin: "", user: "", password: "", newPassword: "true" }, ...passwords]);
+    setDisabled(true);
+  };
 
   return (
     <Container>
+      <Settings>
+        <Button style={{ width: "120px", margin: 0 }} onClick={addPassword} disabled={disable}>
+          Add
+        </Button>
+      </Settings>
       {passwords.map(el => {
-        return <Password key={el.origin} origin={el.origin} user={el.user} password={el.password} />;
+        return (
+          <Password
+            key={el.origin}
+            origin={el.origin}
+            user={el.user}
+            password={el.password}
+            newPassword={el.newPassword}
+          />
+        );
       })}
     </Container>
   );
 };
 
-const Password: React.FC<any> = ({ origin, user, password }) => {
+const Password: React.FC<any> = ({ origin, username, password, newPassword }) => {
   const [showSettings, setshowSettings] = useState<boolean>(false);
-  const [settingsPosition, setSettingsPositions] = useState<any>({ x: 0, y: 0 });
+  const [settingsPosition, setSettingsPositions] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [editing, setEditing] = useState<boolean>(false);
-  const [editData, setEditData] = useState({ origin: "", user: "", password: "" });
+  const [editData, setEditData] = useState({ origin: "", username: "", password: "" });
+  const [editDataError, setEditDataError] = useState<{ password: boolean }>({
+    password: false
+  });
+
+  React.useEffect(() => {
+    setEditData({ origin: origin, username: username, password: password });
+    if (newPassword) {
+      setEditing(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const settingsHandler = (e: React.MouseEvent<HTMLElement>) => {
     const bounds = e.currentTarget.getBoundingClientRect() as DOMRect;
@@ -46,8 +78,22 @@ const Password: React.FC<any> = ({ origin, user, password }) => {
     setSettingsPositions({ x: x, y: y });
   };
 
+  const validateData = () => {
+    let password = false;
+    console.log(editData);
+    if (!editData.password) {
+      password = true;
+    }
+    setEditDataError({ password: password });
+    if (password) {
+      return false;
+    }
+    return true;
+  };
+
   const handleEdit = () => {
     setEditing(true);
+
     setshowSettings(false);
   };
 
@@ -55,19 +101,33 @@ const Password: React.FC<any> = ({ origin, user, password }) => {
     setshowSettings(false);
   };
 
-  const handleEditSave = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleEditSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const isValid = validateData();
+    if (!isValid) {
+      return;
+    }
+    setEditing(false);
+  };
+
+  const handleNewPasswordSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const isValid = validateData();
+    if (!isValid) {
+      return;
+    }
+    await axios.post("/dashboard/password", editData);
     setEditing(false);
   };
 
   return (
     <StyledPassword>
       <img
-        src={`https://s2.googleusercontent.com/s2/favicons?domain=${origin}`}
+        src={`https://s2.googleusercontent.com/s2/favicons?domain=${origin ? origin : "default"}`}
         alt={origin}
         style={{ marginLeft: "20px" }}
       />
-      <Form onSubmit={handleEditSave}>
+      <Form onSubmit={newPassword ? handleNewPasswordSubmit : handleEditSubmit}>
         <Input
           type="text"
           value={editData.origin ? editData.origin : origin}
@@ -75,14 +135,16 @@ const Password: React.FC<any> = ({ origin, user, password }) => {
           disabled={!editing}
           copyValue={true}
           onChange={e => setEditData({ ...editData, origin: e.target.value })}
+          autoComplete="disabled"
         />
         <Input
           type="text"
-          value={editData.user ? editData.user : user}
+          value={editData.username ? editData.username : username}
           border={editing}
           disabled={!editing}
           copyValue={true}
-          onChange={e => setEditData({ ...editData, user: e.target.value })}
+          onChange={e => setEditData({ ...editData, username: e.target.value })}
+          autoComplete="disabled"
         />
         <Input
           type="password"
@@ -91,6 +153,8 @@ const Password: React.FC<any> = ({ origin, user, password }) => {
           disabled={!editing}
           copyValue={true}
           onChange={e => setEditData({ ...editData, password: e.target.value })}
+          autoComplete="new-password"
+          error={editDataError.password}
         />
         <SettingsContainer>
           {!editing ? (
@@ -115,8 +179,7 @@ const Password: React.FC<any> = ({ origin, user, password }) => {
 
 const Container = styled.div`
   width: 100%;
-  height: 100%;
-  box-shadow: ${props => props.theme.shadows["1dp"]};
+  height: max-content;
   background-color: ${props => props.theme.white};
 `;
 
@@ -140,6 +203,15 @@ const SettingsContainer = styled.div`
 const Form = styled.form`
   display: flex;
   width: 100%;
+`;
+
+const Settings = styled.div`
+  height: 60px;
+  width: 100%;
+  background-color: #eee;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
 `;
 
 export default Passwords;

@@ -252,6 +252,7 @@ module.exports = {
     "no-useless-constructor": "off",
     "@typescript-eslint/no-useless-constructor": "warn",
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-empty-interface": "warn"
+    "@typescript-eslint/no-empty-interface": "off",
+    "prefer-const": "warn"
   }
 };

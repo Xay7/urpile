@@ -29,14 +29,15 @@ module.exports = (env, argv) => {
 
   return {
     entry: "./src/index.tsx",
+    devtool: "source-map",
     output: {
       path: path.resolve(__dirname, "build"),
+      publicPath: "/",
       filename: isDevelopment ? "static/js/[name].bundle.js" : "static/js/[name].[chunkhash].bundle.js",
       chunkFilename: isDevelopment ? "static/js/[name].bundle.js" : "static/js/[name].[chunkhash].bundle.js"
     },
     resolve: {
-      extensions: [".ts", ".tsx", ".js", ".jsx"],
-      alias: { "react-dom": "@hot-loader/react-dom" }
+      extensions: [".ts", ".tsx", ".js", ".jsx"]
     },
     module: {
       rules: [
@@ -59,8 +60,7 @@ module.exports = (env, argv) => {
                 "@babel/plugin-transform-runtime",
                 ["@babel/plugin-proposal-decorators", { legacy: true }],
                 ["@babel/plugin-proposal-class-properties", { loose: true }],
-                "@babel/proposal-object-rest-spread",
-                "react-hot-loader/babel"
+                "@babel/proposal-object-rest-spread"
               ]
             }
           }
@@ -96,7 +96,7 @@ module.exports = (env, argv) => {
       ]
     },
     optimization: {
-      minimize: true,
+      minimize: isProduction,
       minimizer: [
         new TerserPlugin({
           terserOptions: {
@@ -133,7 +133,7 @@ module.exports = (env, argv) => {
       // Makes CSS great again
       new OptimizeCSSAssetsPlugin({}),
       // Clean build folder between builds
-      isProduction && new CleanWebpackPlugin(),
+      new CleanWebpackPlugin(),
       // Makes separate folder for css files
       new MiniCssExtractPlugin({
         filename: "static/css/[name].css",
@@ -153,10 +153,11 @@ module.exports = (env, argv) => {
     devServer: {
       port: 3000,
       compress: true,
-      hot: true,
       quiet: true,
       clientLogLevel: "silent",
-      historyApiFallback: true
+      historyApiFallback: true,
+      hot: true,
+      contentBase: ["./src", "./public"]
     }
   };
 };

@@ -10,6 +10,7 @@ export const validateBody = (schema: Schema) => {
       if (result.error.details[0].context!.label) {
         errorMessage = result.error.details[0].context!.label;
       }
+
       return res.status(401).send(errorMessage);
     }
     next();

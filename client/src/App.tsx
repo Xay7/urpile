@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { hot } from "react-hot-loader/root";
 import { Switch, Route } from "react-router-dom";
 import Login from "./views/Login/Login";
 import Landing from "./views/Landing/Landing";
@@ -43,7 +42,7 @@ const DashboardLayout = () => {
             <Route exact path="/dashboard" component={Dashboard} />
             <Route exact path="/dashboard/notes" component={Dashboard} />
             <Route exact path="/dashboard/calendar" component={Calendar} />
-            <Route exact path="/dashboard/passwords" component={Passwords} />
+            {/* <Route exact path="/dashboard/passwords" component={Passwords} /> */}
             <Route exact path="/dashboard/logout" component={Dashboard} />
             <Route path="/dashboard/*" component={() => <div>Make 404 page here</div>} />
           </Switch>
@@ -61,4 +60,4 @@ const Main = styled.main`
   box-sizing: border-box;
 `;
 
-export default hot(App);
+export default App;
