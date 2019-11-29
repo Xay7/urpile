@@ -1,12 +1,12 @@
-import Joi, { Schema } from "@hapi/joi";
-import { Request, Response, NextFunction, RequestHandler } from "express";
-import db from "../db/db";
+import Joi, { Schema } from '@hapi/joi';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
+import db from '../db/db';
 
 export const validateBody = (schema: Schema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const result = schema.validate(req.body);
     if (result.error) {
-      let errorMessage = "Unknown error";
+      let errorMessage = 'Unknown error';
       if (result.error.details[0].context!.label) {
         errorMessage = result.error.details[0].context!.label;
       }
@@ -18,12 +18,12 @@ export const validateBody = (schema: Schema) => {
 };
 
 export const validateSession: RequestHandler = async (req, res, next) => {
-  if (!req.session!.userID) {
-    return res.status(400).send("Unauthorized");
+  if (!req.session!.uid) {
+    return res.status(400).send('Unauthorized');
   }
-  const { rows } = await db.query("SELECT id FROM users WHERE id = $1", [req.session!.userID]);
+  const { rows } = await db.query('SELECT uid FROM users WHERE uid = $1', [req.session!.uid]);
   if (!rows.length) {
-    return res.status(400).send("Unauthorized");
+    return res.status(400).send('Unauthorized');
   }
   // Session is valid, proceed
   next();
@@ -35,31 +35,31 @@ export const schemas = {
       .min(3)
       .max(24)
       .required()
-      .label("Invalid username"),
+      .label('Invalid username'),
     password: Joi.string()
       .min(6)
       .max(4096)
       .required()
-      .label("Invalid password"),
+      .label('Invalid password'),
     confirmPassword: Joi.any()
-      .valid(Joi.ref("password"))
+      .valid(Joi.ref('password'))
       .required()
-      .label("Invalid confirm password"),
+      .label('Invalid confirm password'),
     email: Joi.string()
       .email()
       .required()
-      .label("Invalid email")
+      .label('Invalid email')
   }),
   login: Joi.object().keys({
     password: Joi.string()
       .min(6)
       .max(4096)
       .required()
-      .label("Invalid password"),
+      .label('Invalid password'),
     email: Joi.string()
       .email()
       .required()
-      .label("Invalid email"),
+      .label('Invalid email'),
     remember: Joi.boolean()
   })
 };
