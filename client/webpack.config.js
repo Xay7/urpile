@@ -1,25 +1,25 @@
 /*eslint-disable */
 
-const path = require("path");
-const fs = require("fs");
-const webpack = require("webpack");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const TerserPlugin = require("terser-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-const dotenv = require("dotenv");
-const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
-const FriendlyErrorsWebpackPlugin = require("friendly-errors-webpack-plugin");
+const path = require('path');
+const fs = require('fs');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const dotenv = require('dotenv');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 
 module.exports = (env, argv) => {
-  const isDevelopment = argv.mode === "development";
-  const isProduction = argv.mode === "production";
+  const isDevelopment = argv.mode === 'development';
+  const isProduction = argv.mode === 'production';
 
   // Parse .env files for dynamic build  and production variables
   const currentPath = path.resolve(__dirname);
-  const basePath = currentPath + "/.env";
-  const envPath = basePath + "." + argv.mode;
+  const basePath = currentPath + '/.env';
+  const envPath = basePath + '.' + argv.mode;
   const finalPath = fs.existsSync(envPath) ? envPath : basePath;
   const fileEnv = dotenv.config({ path: finalPath }).parsed;
   const envKeys = Object.keys(fileEnv).reduce((prev, next) => {
@@ -28,39 +28,39 @@ module.exports = (env, argv) => {
   }, {});
 
   return {
-    entry: "./src/index.tsx",
-    devtool: "source-map",
+    entry: './src/index.tsx',
+    devtool: 'source-map',
     output: {
-      path: path.resolve(__dirname, "build"),
-      publicPath: "/",
-      filename: isDevelopment ? "static/js/[name].bundle.js" : "static/js/[name].[chunkhash].bundle.js",
-      chunkFilename: isDevelopment ? "static/js/[name].bundle.js" : "static/js/[name].[chunkhash].bundle.js"
+      path: path.resolve(__dirname, 'build'),
+      publicPath: '/',
+      filename: isDevelopment ? 'static/js/[name].bundle.js' : 'static/js/[name].[chunkhash].bundle.js',
+      chunkFilename: isDevelopment ? 'static/js/[name].bundle.js' : 'static/js/[name].[chunkhash].bundle.js'
     },
     resolve: {
-      extensions: [".ts", ".tsx", ".js", ".jsx"]
+      extensions: ['.ts', '.tsx', '.js', '.jsx']
     },
     module: {
       rules: [
         {
-          enforce: "pre",
+          enforce: 'pre',
           test: /\.tsx$/,
           exclude: /node_modules/,
-          loader: "eslint-loader"
+          loader: 'eslint-loader'
         },
         {
           test: /\.tsx?$/,
           use: {
-            loader: "babel-loader",
+            loader: 'babel-loader',
             options: {
               cacheDirectory: true,
               babelrc: false,
-              presets: ["@babel/preset-env", "@babel/preset-typescript", "@babel/preset-react"],
+              presets: ['@babel/preset-env', '@babel/preset-typescript', '@babel/preset-react'],
               plugins: [
-                ["babel-plugin-styled-components"],
-                "@babel/plugin-transform-runtime",
-                ["@babel/plugin-proposal-decorators", { legacy: true }],
-                ["@babel/plugin-proposal-class-properties", { loose: true }],
-                "@babel/proposal-object-rest-spread"
+                ['babel-plugin-styled-components'],
+                '@babel/plugin-transform-runtime',
+                ['@babel/plugin-proposal-decorators', { legacy: true }],
+                ['@babel/plugin-proposal-class-properties', { loose: true }],
+                '@babel/proposal-object-rest-spread'
               ]
             }
           }
@@ -74,24 +74,24 @@ module.exports = (env, argv) => {
                 hmr: isDevelopment
               }
             },
-            "css-loader"
+            'css-loader'
           ]
         },
         {
           test: /\.(png|jpg|gif)$/,
           use: [
             {
-              loader: "url-loader",
+              loader: 'url-loader',
               options: {
                 limit: 8192,
-                name: "static/media/[name].[hash:8].[ext]"
+                name: 'static/media/[name].[hash:8].[ext]'
               }
             }
           ]
         },
         {
           test: /\.svg$/,
-          use: ["@svgr/webpack", "url-loader"]
+          use: ['@svgr/webpack', 'url-loader']
         }
       ]
     },
@@ -108,7 +108,7 @@ module.exports = (env, argv) => {
         })
       ],
       splitChunks: {
-        chunks: "all"
+        chunks: 'all'
       }
     },
     plugins: [
@@ -116,7 +116,7 @@ module.exports = (env, argv) => {
       new ForkTsCheckerWebpackPlugin(),
       // Makes html great again
       new HtmlWebpackPlugin({
-        template: "./public/index.html",
+        template: './public/index.html',
         minify: isProduction && {
           removeComments: true,
           collapseWhitespace: true,
@@ -136,15 +136,15 @@ module.exports = (env, argv) => {
       new CleanWebpackPlugin(),
       // Makes separate folder for css files
       new MiniCssExtractPlugin({
-        filename: "static/css/[name].css",
-        chunkFilename: "static/css/[name].chunk.css"
+        filename: 'static/css/[name].css',
+        chunkFilename: 'static/css/[name].chunk.css'
       }),
       // Sets env variables for our client
       new webpack.DefinePlugin(envKeys),
       isDevelopment &&
         new FriendlyErrorsWebpackPlugin({
           compilationSuccessInfo: {
-            messages: ["Client running on localhost:3000"]
+            messages: ['Client running on localhost:3000']
           },
           clearConsole: true
         })
@@ -154,10 +154,10 @@ module.exports = (env, argv) => {
       port: 3000,
       compress: true,
       quiet: true,
-      clientLogLevel: "silent",
+      clientLogLevel: 'silent',
       historyApiFallback: true,
       hot: true,
-      contentBase: ["./src", "./public"]
+      contentBase: ['./src', './public']
     }
   };
 };

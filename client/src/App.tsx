@@ -1,15 +1,14 @@
-import React from "react";
-import styled from "styled-components";
-import { Switch, Route } from "react-router-dom";
-import Login from "./views/Login/Login";
-import Landing from "./views/Landing/Landing";
-import Register from "./views/Register/Register";
-import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
-import Navbar from "./components/Navbar/Navbar";
-import Passwords from "./views/Passwords/Passwords";
-import Calendar from "./views/Calendar/Calendar";
+import React from 'react';
+import styled from 'styled-components';
+import { Switch, Route } from 'react-router-dom';
+import Login from './views/Login/Login';
+import Landing from './views/Landing/Landing';
+import Register from './views/Register/Register';
+import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+import Navbar from './components/Navbar/Navbar';
+import Calendar from './views/Calendar/Calendar';
 
-const Dashboard = React.lazy(() => import("./views/Dashboard/Dashboard"));
+const Dashboard = React.lazy(() => import('./views/Dashboard/Dashboard'));
 
 const App: React.FC = () => {
   return (

@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { Route, Redirect } from "react-router-dom";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import { Route, Redirect } from 'react-router-dom';
+import axios from 'axios';
 
 const authenticate = async () => {
   try {
-    await axios.get("/users/dashboard");
+    const res = await axios.get('/users/dashboard');
+    if (localStorage.getItem('uid') === null) {
+      localStorage.setItem('uid', res.data.id);
+    }
     return true;
   } catch {
     return false;
@@ -33,13 +36,7 @@ const PrivateRouteFunctional: React.FC<any> = ({ component: Component, ...rest }
 
   if (state.loading) {
     return <div>LOADING</div>;
-  } else
-    return (
-      <Route
-        {...rest}
-        render={props => (state.isAuthenticated === true ? <Component {...props} /> : <Redirect to="/login" />)}
-      />
-    );
+  } else return <Route {...rest} render={props => (state.isAuthenticated === true ? <Component {...props} /> : <Redirect to="/login" />)} />;
 };
 
 export default PrivateRouteFunctional;

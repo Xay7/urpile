@@ -1,52 +1,39 @@
-import React from "react";
-import styled from "styled-components";
+import React, { useRef, useEffect, useState } from 'react';
+import styled from 'styled-components';
+import usePortal from '../../helpers/usePortal';
 
-interface Props {
-  position: string;
-  text: string;
-}
+interface Props {}
 
-const Tooltip: React.FC<Props> = props => {
+const NoteForm: React.FC<Props> = props => {
+  const ref = useRef(null);
+  const portal = usePortal();
+  const [test, setTest] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const childViewportPosition = ref.current.getBoundingClientRect();
+    console.log(childViewportPosition);
+    setTest({ x: childViewportPosition.x, y: childViewportPosition.y });
+  }, []);
+
+  const childElement = React.Children.only(props.children);
+
   return (
     <>
-      <StyledTooltip position={props.position} text={props.text}>
-        {props.children}
-      </StyledTooltip>
+      {portal(<Container x={test.x} y={test.y}></Container>)}
+      {React.Children.map(props.children, (element: any, idx) => {
+        return React.cloneElement(element, { ref: ref });
+      })}
     </>
   );
 };
 
-const StyledTooltip = styled("div")<any>`
-  width: max-content;
-  height: max-content;
-  background-color: transparent;
-  position: relative;
-  z-index: 9344399;
-
-  &:before {
-    display: none;
-    background: #333;
-    background: rgba(0, 0, 0, 0.8);
-    border-radius: 5px;
-    bottom: 30px;
-    transform: translate(-50%, -50%);
-    left: ${props => (props.position === "left" ? "-100%" : props.position === "right" ? "200%" : "50%")};
-    top: ${props =>
-      props.position === "left" || props.position === "right" ? "50%" : props.position === "top" ? "-50%" : "130%"};
-    color: #fff;
-    content: "${props => props.text}";
-    padding: 5px 15px;
-    position: absolute;
-    width: max-content;
-    height: max-content;
-    z-index: 9344399;
-  }
-
-  &:hover {
-    &:before {
-      display: block;
-    }
-  }
+const Container = styled('div')<any>`
+  height: 50px;
+  width: 50px;
+  background-color: red;
+  position: absolute;
+  top: ${props => props.y + 'px'};
+  left: ${props => props.x + 'px'};
 `;
 
-export default Tooltip;
+export default NoteForm;
