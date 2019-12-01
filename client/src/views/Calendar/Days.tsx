@@ -1,44 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, ReactChild } from 'react';
 import styled from 'styled-components';
 import moment, { Moment } from 'moment';
 import { generateNotes } from './generateNotes';
 import CalendarNote from './CalendarNote';
-
-interface Days
-  extends Array<{
-    day: Moment;
-    index: number;
-    filler?: boolean;
-    today?: boolean;
-  }> {}
+import { DayData, DayDataRow, CalendarEvent, CalendarNotes } from './types';
+import Tooltip from '../../components/Tooltip/Tooltip';
+import ConditionalWrap from '../../helpers/ConditionalWrap';
 
 interface Props {
   month: Moment;
+  rows: any;
 }
 
-const Days: React.FC<Props> = ({ month }) => {
-  const today = month;
-  const firstDayOfMonth = +moment(today)
-    .startOf('month')
-    .format('d');
-  const daysInMonth = +moment(today).daysInMonth();
-  const days: Days = [];
-  const rows: Array<Days> = [];
-  let cells: Days = [];
-  const [calendarEvent, setCalendarEvent] = useState<{
-    holding: boolean;
-    released: boolean;
-    startIndex: number | null;
-    hoverIndex: number | null;
-    startDay: number | null;
-  }>({
+const Days: React.FC<Props> = ({ month, rows }) => {
+  const [calendarEvent, setCalendarEvent] = useState<CalendarEvent>({
     holding: false,
     released: false,
     startIndex: null,
     hoverIndex: null,
-    startDay: null
+    startDay: null,
+    endDay: null
   });
-  const [calendarNotes, setCalendarNotes] = useState<Array<{ start: Moment; end: Moment; title: string; colSpan?: number }>>([
+  const [calendarNotes, setCalendarNotes] = useState<Array<CalendarNotes>>([
     {
       start: moment().add('5', 'day'),
       end: moment().add('6', 'day'),
@@ -50,10 +33,9 @@ const Days: React.FC<Props> = ({ month }) => {
       title: 'b'
     }
   ]);
-  const [showNoteForm, setShowNoteForm] = useState(false);
+  const [popup, setPopup] = useState({ show: false, x: 0, y: 0 });
 
-  const addEvent = (endDay: number, endIndex: number) => {
-    setShowNoteForm(!showNoteForm);
+  const addEvent = (e: React.MouseEvent, endDay: Moment) => {
     let start = moment(calendarEvent.startDay);
     let end = moment(endDay);
 
@@ -72,66 +54,18 @@ const Days: React.FC<Props> = ({ month }) => {
       ...calendarEvent,
       holding: false,
       startIndex: null,
-      hoverIndex: null
+      hoverIndex: null,
+      endDay: endDay,
+      released: true
+    });
+    setPopup({
+      show: true,
+      x: e.clientX,
+      y: e.clientY
     });
   };
 
-  const isToday = () => {
-    if (!moment(today).isSame(moment(), 'day')) {
-      return;
-    }
-    return +moment(today).format('D');
-  };
-
-  for (let day = firstDayOfMonth - 1, index = 0; day >= 0; day--, index++) {
-    days.push({
-      day: moment(today).date(-day),
-      index: index,
-      filler: true
-    });
-  }
-
-  // Adds actual days
-  for (let index = 1; index <= daysInMonth; index++) {
-    if (isToday() === index) {
-      days.push({
-        day: moment(today).date(index),
-        today: true,
-        index: index + firstDayOfMonth - 1
-      });
-    } else
-      days.push({
-        day: moment(today).date(index),
-        index: index + firstDayOfMonth - 1
-      });
-  }
-
-  // Adds after month ends filler dates
-  const daysLength = days.length;
-  for (let index = 0; index < 42 - daysLength; index++) {
-    days.push({
-      day: moment(today).date(index + daysInMonth + 1),
-      index: index + daysLength,
-      filler: true
-    });
-  }
-
-  // Constructs table layout by calculating adding rows and cells
-  days.forEach((row, i) => {
-    if (i % 7 !== 0) {
-      cells.push(row);
-    } else {
-      if (i > 1) {
-        rows.push(cells);
-      }
-      cells = [];
-      cells.push(row);
-    }
-    if (i === days.length - 1) {
-      rows.push(cells);
-    }
-  });
-  const constructedDays = rows.map((row, rowIndex) => {
+  const constructedDays = rows.map((row: DayDataRow, rowIndex: number) => {
     const currentWeekNotes = calendarNotes.filter(el => {
       return moment(el.start).isBetween(moment(row[0].day), moment(row[6].day), 'days', '[]');
     });
@@ -140,35 +74,39 @@ const Days: React.FC<Props> = ({ month }) => {
     return (
       <Row key={rowIndex}>
         <RowBackgrounds>
-          {row.map((obj: any, rowIndex: any) => {
+          {row.map((day: DayData) => {
             return (
-              <RowBackground
-                key={obj.index}
-                calendarEvent={
-                  calendarEvent.holding &&
-                  calendarEvent.hoverIndex !== null &&
-                  ((obj.index >= calendarEvent.startIndex && obj.index <= calendarEvent.hoverIndex) ||
-                    (obj.index <= calendarEvent.startIndex && obj.index >= calendarEvent.hoverIndex))
-                }
-                onMouseDown={() => {
-                  setCalendarEvent({
-                    ...calendarEvent,
-                    holding: true,
-                    startIndex: obj.index,
-                    startDay: obj.day,
-                    hoverIndex: obj.index
-                  });
-                }}
-                onMouseUp={() => addEvent(obj.day, obj.index)}
-                onMouseEnter={() => {
-                  if (!calendarEvent.holding) {
-                    return;
-                  } else
+              <ConditionalWrap
+                key={day.index}
+                condition={day.index === 41}
+                wrap={(children: ReactChild) => <Tooltip position="right">{children}</Tooltip>}>
+                <RowBackground
+                  calendarEvent={
+                    calendarEvent.holding &&
+                    calendarEvent.hoverIndex !== null &&
+                    ((day.index >= calendarEvent.startIndex && day.index <= calendarEvent.hoverIndex) ||
+                      (day.index <= calendarEvent.startIndex && day.index >= calendarEvent.hoverIndex))
+                  }
+                  onMouseDown={() => {
                     setCalendarEvent({
                       ...calendarEvent,
-                      hoverIndex: obj.index
+                      holding: true,
+                      startIndex: day.index,
+                      startDay: day.day,
+                      hoverIndex: day.index
                     });
-                }}></RowBackground>
+                  }}
+                  onMouseUp={(e: React.MouseEvent) => addEvent(e, day.day)}
+                  onMouseEnter={() => {
+                    if (!calendarEvent.holding) {
+                      return;
+                    } else
+                      setCalendarEvent({
+                        ...calendarEvent,
+                        hoverIndex: day.index
+                      });
+                  }}></RowBackground>
+              </ConditionalWrap>
             );
           })}
         </RowBackgrounds>
@@ -176,7 +114,7 @@ const Days: React.FC<Props> = ({ month }) => {
           <Table>
             <thead>
               <tr>
-                {row.map((obj: any, rowIndex: any) => {
+                {row.map((obj: DayData, rowIndex: number) => {
                   return (
                     <Day key={rowIndex} today={obj.today} fillerDay={obj.filler}>
                       {moment(obj.day).format('D')}
@@ -188,7 +126,7 @@ const Days: React.FC<Props> = ({ month }) => {
             <tbody>
               <React.Fragment key={rowIndex}>
                 {notes &&
-                  notes.map((el, ind) => {
+                  notes.map((el, ind: number) => {
                     return (
                       <tr key={ind}>
                         {[...el].map((ell, ind) => {

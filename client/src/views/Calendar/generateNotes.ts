@@ -1,6 +1,8 @@
 import moment from 'moment';
 
 let overflowingNotes: Array<any> = [];
+
+// Generate array of notes based on the current row and notes
 export const generateNotes = (row, rowIndex, currentWeekNotes) => {
   const emptyRow = row.map((el, index) => {
     return {

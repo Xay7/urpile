@@ -4,14 +4,11 @@ import styled from 'styled-components';
 import Icon from '../../components/Icon/Icon';
 import Weekdays from './Weekdays';
 import Days from './Days';
+import { DayDataRow } from './types';
 
-interface Daysss
-  extends Array<{
-    day: Moment;
-    index: number;
-    filler?: boolean;
-    today?: boolean;
-  }> {}
+interface Props {
+  month: Moment;
+}
 
 const Calendar: React.FC = () => {
   const [date, setDate] = useState<Moment>(moment());
@@ -19,9 +16,9 @@ const Calendar: React.FC = () => {
     .startOf('month')
     .format('d');
   const daysInMonth = +moment(date).daysInMonth();
-  const days: Daysss = [];
-  const rows: Array<Daysss> = [];
-  let cells: Daysss = [];
+  const days: DayDataRow = [];
+  const rows: Array<DayDataRow> = [];
+  let cells: DayDataRow = [];
 
   const isToday = () => {
     if (!moment(date).isSame(moment(), 'day')) {
@@ -30,15 +27,6 @@ const Calendar: React.FC = () => {
     return +moment(date).format('D');
   };
 
-  const nextMonth = () => {
-    setDate(moment(date).add(1, 'month'));
-  };
-
-  const previousMonth = () => {
-    setDate(moment(date).subtract(1, 'month'));
-  };
-
-  // Adds before month start filler dates
   for (let day = firstDayOfMonth - 1, index = 0; day >= 0; day--, index++) {
     days.push({
       day: moment(date).date(-day),
@@ -88,6 +76,13 @@ const Calendar: React.FC = () => {
     }
   });
 
+  const nextMonth = () => {
+    setDate(moment(date).add(1, 'month'));
+  };
+
+  const previousMonth = () => {
+    setDate(moment(date).subtract(1, 'month'));
+  };
   return (
     <Container>
       <Month>
@@ -97,7 +92,7 @@ const Calendar: React.FC = () => {
       </Month>
       <Dayss>
         <Weekdays />
-        <Days month={date} />
+        <Days month={date} rows={rows} />
       </Dayss>
     </Container>
   );

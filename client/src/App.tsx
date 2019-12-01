@@ -4,7 +4,7 @@ import { Switch, Route } from 'react-router-dom';
 import Login from './views/Login/Login';
 import Landing from './views/Landing/Landing';
 import Register from './views/Register/Register';
-import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+import PrivateRoute from './components/HOC/PrivateRoute/PrivateRoute';
 import Navbar from './components/Navbar/Navbar';
 import Calendar from './views/Calendar/Calendar';
 
