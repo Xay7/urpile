@@ -6,9 +6,16 @@ import axios from 'axios';
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import Theme from './styles/theme';
+import moment from 'moment';
 
 axios.defaults.baseURL = process.env.SERVER_URL;
 axios.defaults.withCredentials = true;
+
+moment.updateLocale('en', {
+  week: {
+    dow: 1
+  }
+});
 
 const app = (
   <BrowserRouter>

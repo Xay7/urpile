@@ -5,7 +5,7 @@ const usePortal = () => {
   const wrapperRef = useRef(null);
   if (wrapperRef.current === null && typeof document !== 'undefined') {
     const div = document.createElement('div');
-    div.setAttribute('data-body-portal', '');
+    div.setAttribute('portal', '');
     wrapperRef.current = div;
   }
   useLayoutEffect(() => {

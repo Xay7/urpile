@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
 const useOutsideClick = (ref: React.RefObject<HTMLElement>, callback: Function) => {
   const handleClick = (e: any) => {
@@ -8,10 +8,10 @@ const useOutsideClick = (ref: React.RefObject<HTMLElement>, callback: Function) 
   };
 
   useEffect(() => {
-    document.addEventListener("click", handleClick);
+    document.addEventListener('click', handleClick);
 
     return () => {
-      document.removeEventListener("click", handleClick);
+      document.removeEventListener('click', handleClick);
     };
   });
 };

@@ -19,13 +19,17 @@ export interface CalendarEvent {
   released: boolean;
   startIndex: number | null;
   hoverIndex: number | null;
-  startDay: Moment | null;
-  endDay: Moment | null;
+  beginning: Moment | null;
+  ending: Moment | null;
 }
 
 export interface CalendarNotes {
-  start: Moment;
-  end: Moment;
+  beginning: Moment;
+  ending: Moment;
   title: string;
   colSpan?: number;
+  id: number;
+  overflowRight: boolean;
+  overflowLeft: boolean;
+  color: string;
 }
