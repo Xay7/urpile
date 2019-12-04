@@ -5,7 +5,6 @@ import morgan from 'morgan';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import UserRouter from './routes/users';
-import PasswordRouter from './routes/passwords';
 import CalendarRouter from './routes/calendar';
 import expressSession from 'express-session';
 import pgSession from 'connect-pg-simple';
@@ -47,7 +46,7 @@ app.use(
 );
 
 app.use('/users', UserRouter);
-app.use('/users/:id/calendar', CalendarRouter);
+app.use('/users/:id/calendarnotes', CalendarRouter);
 
 const port = process.env.PORT || 3001;
 

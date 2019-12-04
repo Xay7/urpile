@@ -5,7 +5,7 @@ import { validateSession } from '../middlewares/validation';
 const router = Router();
 
 router
-  .route('/notes')
+  .route('/')
   .get(validateSession, CalendarController.getNotes)
   .post(validateSession, CalendarController.postNote)
   .put(validateSession, CalendarController.putNote)
