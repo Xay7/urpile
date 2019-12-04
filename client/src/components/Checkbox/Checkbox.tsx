@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 interface Props {
   checked: boolean;
@@ -16,12 +16,12 @@ const Checkbox: React.FC<Props> = props => {
           <polyline points="20 6 9 17 4 12" />
         </Icon>
       </StyledCheckbox>
-      <Span style={{ fontSize: "1.3rem", marginLeft: "8px" }}>{props.label}</Span>
+      <Span style={{ fontSize: '1.3rem', marginLeft: '8px' }}>{props.label}</Span>
     </Label>
   );
 };
 
-const HiddenCheckbox = styled("input")<any>`
+const HiddenCheckbox = styled('input')<any>`
   border: 0;
   clip: rect(0 0 0 0);
   clip-path: inset(50%);
@@ -40,17 +40,18 @@ const Icon = styled.svg`
   stroke-width: 2px;
 `;
 
-const StyledCheckbox = styled("div")<any>`
+const StyledCheckbox = styled('div')<any>`
   display: inline-block;
   width: 16px;
   height: 16px;
+  margin-left: 10px;
   background-color: ${(props: any) => (props.checked ? props.theme.primary : props.theme.white)};
-  border: 1px solid ${(props: any) => (props.checked ? props.theme.primary : "#d0d0d0")};
+  border: 1px solid ${(props: any) => (props.checked ? props.theme.primary : '#d0d0d0')};
   border-radius: 3px;
   transition: all 150ms;
 
   ${Icon} {
-    visibility: ${(props: any) => (props.checked ? "visible" : "hidden")};
+    visibility: ${(props: any) => (props.checked ? 'visible' : 'hidden')};
   }
 
   &:hover {

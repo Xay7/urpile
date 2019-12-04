@@ -1,7 +1,7 @@
-import React, { useRef } from "react";
-import styled from "styled-components";
-import { ReactComponent as Copy } from "../../assets/svg/copy.svg";
-import Icon from "../../components/Icon/Icon";
+import React, { MutableRefObject } from 'react';
+import styled from 'styled-components';
+import { ReactComponent as Copy } from '../../assets/svg/copy.svg';
+import Icon from '../../components/Icon/Icon';
 
 interface Props {
   type: string;
@@ -13,15 +13,15 @@ interface Props {
   border?: boolean;
   disabled?: boolean;
   copyValue?: boolean;
+  ref?: MutableRefObject<HTMLInputElement>;
 }
 
-const Input: React.FC<Props> = props => {
-  const inputRef = useRef(null);
+const Input: React.FC<Props> = React.forwardRef((props, ref) => {
   const copyToClickboard = () => {
-    navigator.clipboard.writeText(props.value ? props.value : "");
+    navigator.clipboard.writeText(props.value ? props.value : '');
   };
   return (
-    <Container>
+    <>
       <StyledInput
         type={props.type}
         placeholder={props.placeholder}
@@ -31,24 +31,18 @@ const Input: React.FC<Props> = props => {
         value={props.value}
         border={props.border}
         disabled={props.disabled}
-        ref={inputRef}
+        ref={ref}
       />
       {props.copyValue && <Icon name="copy" onClick={copyToClickboard} size="20px" />}
-    </Container>
+    </>
   );
-};
+});
 
 Input.defaultProps = {
   border: true
 };
 
-const Container = styled.div`
-  width: 100%;
-  margin: 15px 10px 15px 10px;
-  display: flex;
-  align-items: center;
-  position: relative;
-`;
+Input.displayName = 'Input';
 
 const CopyIcon = styled(Copy)`
   position: relative;
@@ -64,12 +58,13 @@ const CopyIcon = styled(Copy)`
   }
 `;
 
-const StyledInput = styled("input")<any>`
+const StyledInput = styled('input')<any>`
   width: 100%;
   height: 40px;
   outline: none;
   padding: 0 20px;
-  border: 1px solid ${props => (props.border ? (props.error ? props.theme.error : "#D0D0D0") : "transparent")};
+  margin: 15px 10px 15px 10px;
+  border: 1px solid ${props => (props.border ? (props.error ? props.theme.error : '#D0D0D0') : 'transparent')};
   border-radius: 5px;
   box-sizing: border-box;
   background-color: ${props => props.theme.white};
@@ -84,7 +79,7 @@ const StyledInput = styled("input")<any>`
   }
 
   &::placeholder {
-    color: ${props => (props.error ? props.theme.error : "#989898")};
+    color: ${props => (props.error ? props.theme.error : '#989898')};
   }
 `;
 

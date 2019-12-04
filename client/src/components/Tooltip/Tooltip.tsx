@@ -2,20 +2,23 @@ import React, { useRef, useState, useLayoutEffect, ReactNode } from 'react';
 import styled from 'styled-components';
 import usePortal from '../../helpers/usePortal';
 import useWindowSize from '../../helpers/useWindowSize';
+import useClickOutside from '../../helpers/useClickOutside';
 
 interface Props {
   position: 'top' | 'right' | 'bottom' | 'left';
   text?: string;
   component?: ReactNode;
+  on?: 'hover' | 'click';
 }
 
 // Tooltip need children to work
-const Tooltip: React.FC<Props> = ({ position, children }) => {
+const Tooltip: React.FC<Props> = ({ position, children, component, on }) => {
   const [windowWidth] = useWindowSize();
   const ref = useRef(null);
   const tooltipRef = useRef(null);
   const portal = usePortal();
   const [toolTipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const [display, setDisplay] = useState('flex');
   useLayoutEffect(() => {
     const childViewportPosition = ref.current.getBoundingClientRect();
     const tooltipWidth = tooltipRef.current.offsetWidth;
@@ -58,16 +61,18 @@ const Tooltip: React.FC<Props> = ({ position, children }) => {
     setTooltipPosition({ x: x, y: y });
   }, [windowWidth, position]);
 
+  useClickOutside(tooltipRef, () => {
+    setDisplay('none');
+  });
+
   return (
     <>
       {portal(
-        <Container x={toolTipPosition.x} y={toolTipPosition.y} ref={tooltipRef}>
-          <p>a</p>
-          <p>b</p>
-          <p>c</p>
-          <p>c</p>
-          <p>c</p>
-        </Container>
+        <>
+          <Container x={toolTipPosition.x} y={toolTipPosition.y} ref={tooltipRef} display={display}>
+            {component && component}
+          </Container>
+        </>
       )}
       {React.Children.map(children, (element: any) => {
         return React.cloneElement(element, { ref: ref });
@@ -82,13 +87,17 @@ const Container = styled.div.attrs((props: { x: number; y: number }) => ({
     left: props.x
   }
 }))<any>`
-  height: 50px;
-  width: 100px;
+  height: max-content;
+  width: max-content;
   padding: 10px;
   border-radius: 5px;
-  background-color: red;
+  background-color: ${props => props.theme.white};
+  box-shadow: ${props => props.theme.shadows['1dp']};
   position: absolute;
   z-index: 99;
+  display: ${props => props.display};
+  align-items: center;
+  justify-content: center;
 `;
 
 export default Tooltip;
