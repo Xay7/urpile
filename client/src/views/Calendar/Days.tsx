@@ -1,4 +1,4 @@
-import React, { useState, ReactChild } from 'react';
+import React, { useState, ReactChild, useEffect } from 'react';
 import styled from 'styled-components';
 import moment, { Moment } from 'moment';
 import { generateNotes } from './generateNotes';
@@ -6,70 +6,72 @@ import CalendarNote from './CalendarNote';
 import { DayData, DayDataRow, CalendarEvent, CalendarNotes } from './types';
 import Tooltip from '../../components/Tooltip/Tooltip';
 import ConditionalWrap from '../../helpers/ConditionalWrap';
+import NoteForm from './NoteForm';
+import axios from 'axios';
 
 interface Props {
   month: Moment;
-  rows: any;
+  rows: Array<DayDataRow>;
 }
 
-const Days: React.FC<Props> = ({ month, rows }) => {
+const Days: React.FC<Props> = ({ rows }) => {
   const [calendarEvent, setCalendarEvent] = useState<CalendarEvent>({
     holding: false,
     released: false,
     startIndex: null,
     hoverIndex: null,
-    startDay: null,
-    endDay: null
+    beginning: null,
+    ending: null
   });
-  const [calendarNotes, setCalendarNotes] = useState<Array<CalendarNotes>>([
-    {
-      start: moment().add('5', 'day'),
-      end: moment().add('6', 'day'),
-      title: 'a'
-    },
-    {
-      start: moment().add('4', 'day'),
-      end: moment().add('5', 'day'),
-      title: 'b'
-    }
-  ]);
-  const [popup, setPopup] = useState({ show: false, x: 0, y: 0 });
+  const [calendarNotes, setCalendarNotes] = useState<Array<CalendarNotes>>([]);
+  const [showForm, setShowForm] = useState(false);
 
-  const addEvent = (e: React.MouseEvent, endDay: Moment) => {
-    let start = moment(calendarEvent.startDay);
-    let end = moment(endDay);
+  useEffect(() => {
+    const fetchNotes = async () => {
+      const uuid = localStorage.getItem('uid');
 
-    if (start.isAfter(end)) {
+      try {
+        const res: any = await axios.get(`/users/${uuid}/calendarnotes`);
+        res.data.forEach((el: CalendarNotes) => {
+          el.beginning = moment(el.beginning);
+          el.ending = moment(el.ending);
+        });
+        setCalendarNotes(res.data);
+      } catch (error) {
+        console.log('Failed to get notes');
+      }
+    };
+    fetchNotes();
+  }, []);
+
+  const showNoteForm = (ending: Moment) => {
+    let [start, end] = [calendarEvent.beginning, ending];
+    if (calendarEvent.beginning.isAfter(ending)) {
       [start, end] = [end, start];
     }
-    setCalendarNotes([
-      ...calendarNotes,
-      {
-        start: moment(start),
-        end: moment(end),
-        title: 'asd'
-      }
-    ]);
     setCalendarEvent({
       ...calendarEvent,
       holding: false,
       startIndex: null,
       hoverIndex: null,
-      endDay: endDay,
+      ending: end,
+      beginning: start,
       released: true
     });
-    setPopup({
-      show: true,
-      x: e.clientX,
-      y: e.clientY
-    });
+    setShowForm(true);
   };
 
-  const constructedDays = rows.map((row: DayDataRow, rowIndex: number) => {
-    const currentWeekNotes = calendarNotes.filter(el => {
-      return moment(el.start).isBetween(moment(row[0].day), moment(row[6].day), 'days', '[]');
-    });
+  const addEvent = notes => {
+    setCalendarNotes(notes);
+  };
 
+  const hideForm = () => {
+    setShowForm(false);
+  };
+  const constructedDays = rows.map((row: DayDataRow, rowIndex: number) => {
+    const currentWeekNotes = calendarNotes.filter((el: CalendarNotes) => {
+      return moment(el.beginning).isBetween(moment(row[0].day), moment(row[6].day), 'days', '[]');
+    });
     const notes = generateNotes(row, rowIndex, currentWeekNotes);
     return (
       <Row key={rowIndex}>
@@ -78,8 +80,21 @@ const Days: React.FC<Props> = ({ month, rows }) => {
             return (
               <ConditionalWrap
                 key={day.index}
-                condition={day.index === 41}
-                wrap={(children: ReactChild) => <Tooltip position="right">{children}</Tooltip>}>
+                condition={moment(day.day).isSame(calendarEvent.ending) && !calendarEvent.holding && showForm}
+                wrap={(children: ReactChild) => (
+                  <Tooltip
+                    position="right"
+                    component={
+                      <NoteForm
+                        hide={hideForm}
+                        beginning={calendarEvent.beginning}
+                        ending={calendarEvent.ending}
+                        success={data => addEvent(data)}
+                      />
+                    }>
+                    {children}
+                  </Tooltip>
+                )}>
                 <RowBackground
                   calendarEvent={
                     calendarEvent.holding &&
@@ -92,11 +107,11 @@ const Days: React.FC<Props> = ({ month, rows }) => {
                       ...calendarEvent,
                       holding: true,
                       startIndex: day.index,
-                      startDay: day.day,
+                      beginning: day.day,
                       hoverIndex: day.index
                     });
                   }}
-                  onMouseUp={(e: React.MouseEvent) => addEvent(e, day.day)}
+                  onMouseUp={(e: React.MouseEvent) => showNoteForm(day.day)}
                   onMouseEnter={() => {
                     if (!calendarEvent.holding) {
                       return;
@@ -116,8 +131,12 @@ const Days: React.FC<Props> = ({ month, rows }) => {
               <tr>
                 {row.map((obj: DayData, rowIndex: number) => {
                   return (
-                    <Day key={rowIndex} today={obj.today} fillerDay={obj.filler}>
-                      {moment(obj.day).format('D')}
+                    <Day key={rowIndex} fillerDay={obj.filler}>
+                      <DaySpan
+                        today={obj.today}
+                        digitNumber={Math.max(Math.floor(Math.log10(Math.abs(+moment(obj.day).format('D')))), 0) + 1}>
+                        {moment(obj.day).format('D')}{' '}
+                      </DaySpan>
                     </Day>
                   );
                 })}
@@ -129,10 +148,18 @@ const Days: React.FC<Props> = ({ month, rows }) => {
                   notes.map((el, ind: number) => {
                     return (
                       <tr key={ind}>
-                        {[...el].map((ell, ind) => {
+                        {[...el].map((note, ind) => {
                           return (
-                            <td key={ind} colSpan={ell.colSpan} style={{ verticalAlign: 'top' }}>
-                              {!ell.empty && <CalendarNote title={ell.title}>{ell.title && ell.title}</CalendarNote>}
+                            <td key={ind} colSpan={note.colSpan} style={{ verticalAlign: 'top' }}>
+                              {!note.empty && (
+                                <CalendarNote
+                                  id={note.id}
+                                  overflowRight={note.overflowRight ? note.overflowRight : false}
+                                  overflowLeft={note.overflowLeft ? note.overflowLeft : false}
+                                  color={note.color}>
+                                  {note.title && note.title}
+                                </CalendarNote>
+                              )}
                             </td>
                           );
                         })}
@@ -161,8 +188,19 @@ const Day = styled('td')<any>`
   font-size: 1.6rem;
   vertical-align: middle;
   z-index: 1111;
-  padding-left: 10px;
-  padding-top: 10px;
+`;
+
+const DaySpan = styled('div')<any>`
+  background-color: ${props => (props.today ? 'hsla(360, 100%, 49%, 0.18)' : 'transparent')};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px;
+  height: 25px;
+  width: 25px;
+  font-weight: 700;
+  border-radius: 25px;
+  margin: 0 auto;
 `;
 
 const Row = styled.div`

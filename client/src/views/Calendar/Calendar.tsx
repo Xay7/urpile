@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import moment, { Moment } from 'moment';
 import styled from 'styled-components';
 import Icon from '../../components/Icon/Icon';
@@ -6,26 +6,25 @@ import Weekdays from './Weekdays';
 import Days from './Days';
 import { DayDataRow } from './types';
 
-interface Props {
-  month: Moment;
-}
-
 const Calendar: React.FC = () => {
   const [date, setDate] = useState<Moment>(moment());
-  const firstDayOfMonth = +moment(date)
-    .startOf('month')
-    .format('d');
+  const [width, setWidth] = useState(null);
+  const ref = useRef(null);
+  const firstDayOfMonth = date.startOf('month').isoWeekday() - 1;
   const daysInMonth = +moment(date).daysInMonth();
   const days: DayDataRow = [];
   const rows: Array<DayDataRow> = [];
   let cells: DayDataRow = [];
-
-  const isToday = () => {
-    if (!moment(date).isSame(moment(), 'day')) {
+  const isToday = day => {
+    if (!moment(day).isSame(moment(), 'day')) {
       return;
     }
-    return +moment(date).format('D');
+    return +moment(day).format('D');
   };
+
+  useEffect(() => {
+    setWidth(ref.current.offsetHeight);
+  }, []);
 
   for (let day = firstDayOfMonth - 1, index = 0; day >= 0; day--, index++) {
     days.push({
@@ -37,7 +36,7 @@ const Calendar: React.FC = () => {
 
   // Adds actual days
   for (let index = 1; index <= daysInMonth; index++) {
-    if (isToday() === index) {
+    if (isToday(moment(date).date(index)) === index) {
       days.push({
         day: moment(date).date(index),
         today: true,
@@ -84,42 +83,45 @@ const Calendar: React.FC = () => {
     setDate(moment(date).subtract(1, 'month'));
   };
   return (
-    <Container>
+    <Container ref={ref} width={width}>
       <Month>
         <Icon name="left" onClick={previousMonth} />
         <h4 style={{ margin: '0 auto' }}>{moment(date).format('MMMM YYYY')}</h4>
         <Icon name="right" onClick={nextMonth} />
       </Month>
-      <Dayss>
+      <DaysContainer>
         <Weekdays />
         <Days month={date} rows={rows} />
-      </Dayss>
+      </DaysContainer>
     </Container>
   );
 };
 
-const Container = styled.div`
+const Container = styled('div')<any>`
   height: 100%;
-  width: 100%;
+  width: ${props => props.width + 'px'};
   box-shadow: ${props => props.theme.shadows['1dp']};
   display: flex;
   flex-direction: column;
   flex: 0 1;
   background-color: ${props => props.theme.white};
+  border-radius: 25px;
 `;
 
 const Month = styled.div`
-  height: 60px;
+  height: 70px;
   color: ${props => props.theme.white};
   background-color: ${props => props.theme.primary};
   vertical-align: middle;
-  font-size: 1.6rem;
+  font-size: 2.5rem;
   display: flex;
   align-items: center;
+  font-weight: bold;
   padding: 0 20px;
+  border-radius: 25px 25px 0 0;
 `;
 
-const Dayss = styled.div`
+const DaysContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1 0;
