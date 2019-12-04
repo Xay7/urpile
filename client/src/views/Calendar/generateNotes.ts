@@ -1,9 +1,10 @@
 import moment from 'moment';
+import { CalendarNotes } from './types';
 
 let overflowingNotes: Array<any> = [];
 
 // Generate array of notes based on the current row and notes
-export const generateNotes = (row, rowIndex, currentWeekNotes) => {
+export const generateNotes = (row, rowIndex, currentWeekNotes: Array<CalendarNotes>) => {
   const emptyRow = row.map((el, index) => {
     return {
       day: el.day,
@@ -25,14 +26,20 @@ export const generateNotes = (row, rowIndex, currentWeekNotes) => {
           ...overflowingNotes,
           {
             row: rowIndex + 1,
-            start: note.start,
-            end: note.end,
+            beginning: note.beginning,
+            ending: note.ending,
             colSpan: note.colSpan - 7,
-            title: note.title
+            id: note.id,
+            title: note.title,
+            color: note.color
           }
         ];
         note.colSpan = 7;
+        note.overflowRight = true;
+        note.overflowLeft = true;
       }
+
+      note.overflowLeft = true;
 
       const overflowedNote = [...emptyRow];
       overflowedNote.splice(0, note.colSpan, note);
@@ -45,28 +52,27 @@ export const generateNotes = (row, rowIndex, currentWeekNotes) => {
     filledRow.push([...emptyRow]);
   }
 
-  currentWeekNotes.forEach((note, noteIndex) => {
-    const colSpan = Math.abs(moment(note.start).diff(moment(note.end), 'days')) + 1;
+  currentWeekNotes.forEach(note => {
+    const colSpan = Math.abs(moment(note.beginning).diff(moment(note.ending), 'days')) + 1;
     loop0: for (const [filledRowIndex, row] of filledRow.entries()) {
       loop1: for (const [dayIndex, day] of row.entries()) {
         const noteLength = dayIndex + colSpan > 7 ? 7 : dayIndex + colSpan;
-        if (day.start && note.start.isBetween(day.start, day.end, 'days', '[]')) {
+        if (day.beginning && note.beginning.isBetween(day.beginning, day.ending, 'days', '[]')) {
           if (filledRow.length - 1 === filledRowIndex) {
             filledRow.push([...emptyRow]);
             break;
           }
           break;
         }
-        if (day.day && note.start.isSame(day.day, 'day')) {
+        if (day.day && moment(note.beginning).isSame(day.day, 'day')) {
           let noteRowColSpan = colSpan;
 
           let length = noteLength;
           for (let i = 0; i < dayIndex; i++) {
             length -= row[i].colSpan;
           }
-          // , j -= day.colSpan
           for (let i = dayIndex, j = dayIndex + length; i < j; i++) {
-            if (row[i].start) {
+            if (row[i].beginning) {
               if (filledRow.length - 1 === filledRowIndex) {
                 filledRow.push([...emptyRow]);
                 break loop1;
@@ -80,12 +86,15 @@ export const generateNotes = (row, rowIndex, currentWeekNotes) => {
               ...overflowingNotes,
               {
                 row: rowIndex + 1,
-                start: note.start,
-                end: note.end,
+                beginning: note.beginning,
+                ending: note.ending,
                 colSpan: colSpan - noteRowColSpan,
-                title: note.title
+                id: note.id,
+                title: note.title,
+                color: note.color
               }
             ];
+            note.overflowRight = true;
           }
           note.colSpan = noteRowColSpan;
           filledRow[filledRowIndex].splice(dayIndex, noteLength - dayIndex, note);
@@ -98,5 +107,6 @@ export const generateNotes = (row, rowIndex, currentWeekNotes) => {
   if (rowIndex === 5) {
     overflowingNotes = [];
   }
+
   return filledRow;
 };
