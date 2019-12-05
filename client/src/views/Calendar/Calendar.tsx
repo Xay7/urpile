@@ -10,7 +10,7 @@ const Calendar: React.FC = () => {
   const [date, setDate] = useState<Moment>(moment());
   const [width, setWidth] = useState(null);
   const ref = useRef(null);
-  const firstDayOfMonth = date.startOf('month').isoWeekday() - 1;
+  const firstDayOfMonth = date.startOf('month').isoWeekday() - 2;
   const daysInMonth = +moment(date).daysInMonth();
   const days: DayDataRow = [];
   const rows: Array<DayDataRow> = [];
@@ -26,7 +26,7 @@ const Calendar: React.FC = () => {
     setWidth(ref.current.offsetHeight);
   }, []);
 
-  for (let day = firstDayOfMonth - 1, index = 0; day >= 0; day--, index++) {
+  for (let day = firstDayOfMonth, index = 0; day >= 0; day--, index++) {
     days.push({
       day: moment(date).date(-day),
       index: index,
@@ -40,18 +40,19 @@ const Calendar: React.FC = () => {
       days.push({
         day: moment(date).date(index),
         today: true,
-        index: index + firstDayOfMonth - 1
+        index: index + firstDayOfMonth
       });
     } else
       days.push({
         day: moment(date).date(index),
-        index: index + firstDayOfMonth - 1
+        index: index + firstDayOfMonth
       });
   }
 
   // Adds after month ends filler dates
   const daysLength = days.length;
-  for (let index = 0; index < 42 - daysLength; index++) {
+  const totalDays = days.length >= 36 ? 42 : 35;
+  for (let index = 0; index < totalDays - daysLength; index++) {
     days.push({
       day: moment(date).date(index + daysInMonth + 1),
       index: index + daysLength,
@@ -105,7 +106,7 @@ const Container = styled('div')<any>`
   flex-direction: column;
   flex: 0 1;
   background-color: ${props => props.theme.white};
-  border-radius: 25px;
+  border-radius: 5px;
 `;
 
 const Month = styled.div`
@@ -118,7 +119,8 @@ const Month = styled.div`
   align-items: center;
   font-weight: bold;
   padding: 0 20px;
-  border-radius: 25px 25px 0 0;
+  border-radius: 5px 5px 0 0;
+  text-transform: capitalize;
 `;
 
 const DaysContainer = styled.div`
