@@ -58,6 +58,7 @@ const Days: React.FC<Props> = ({ rows }) => {
       beginning: start,
       released: true
     });
+
     setShowForm(true);
   };
 
@@ -73,6 +74,22 @@ const Days: React.FC<Props> = ({ rows }) => {
       return moment(el.beginning).isBetween(moment(row[0].day), moment(row[6].day), 'days', '[]');
     });
     const notes = generateNotes(row, rowIndex, currentWeekNotes);
+    const hiddenNotes = [0, 0, 0, 0, 0, 0, 0];
+
+    const noteLimit = 3;
+
+    if (notes.length > noteLimit) {
+      for (let i = noteLimit; i <= notes.length - 1; i++) {
+        for (let y = 0; y <= notes[i].length - 1; y++) {
+          if (notes[i][y].id) {
+            hiddenNotes[y]++;
+          }
+        }
+      }
+      notes.splice(noteLimit, notes.length);
+    }
+    const isHiddenEmpty = hiddenNotes.every(v => v === hiddenNotes[0]);
+
     return (
       <Row key={rowIndex}>
         <RowBackgrounds>
@@ -87,8 +104,8 @@ const Days: React.FC<Props> = ({ rows }) => {
                     component={
                       <NoteForm
                         hide={hideForm}
-                        beginning={calendarEvent.beginning}
-                        ending={calendarEvent.ending}
+                        beginning={calendarEvent.beginning.toString()}
+                        ending={calendarEvent.ending.toString()}
                         success={data => addEvent(data)}
                       />
                     }>
@@ -166,6 +183,17 @@ const Days: React.FC<Props> = ({ rows }) => {
                       </tr>
                     );
                   })}
+                {!isHiddenEmpty && (
+                  <tr>
+                    {hiddenNotes.map((el, index) => {
+                      return (
+                        <td colSpan={1} key={index}>
+                          {el > 0 && <HiddenNotes>+{el}</HiddenNotes>}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                )}
               </React.Fragment>
             </tbody>
           </Table>
@@ -187,7 +215,7 @@ const Day = styled('td')<any>`
   color: ${props => (props.fillerDay ? '#ccc' : props.today ? 'blue' : 'black')};
   font-size: 1.6rem;
   vertical-align: middle;
-  z-index: 1111;
+  z-index: 50;
 `;
 
 const DaySpan = styled('div')<any>`
@@ -201,6 +229,8 @@ const DaySpan = styled('div')<any>`
   font-weight: 700;
   border-radius: 25px;
   margin: 0 auto;
+  margin-top: 5px;
+  margin-bottom: 2px;
 `;
 
 const Row = styled.div`
@@ -232,5 +262,11 @@ const RowBackgrounds = styled.div`
 `;
 
 const RowDays = styled.div``;
+
+const HiddenNotes = styled.div`
+  text-align: center;
+  margin: 3px 0;
+  color: red;
+`;
 
 export default Days;
