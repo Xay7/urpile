@@ -1,5 +1,5 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
 interface Props {
   starting?: boolean;
@@ -7,7 +7,7 @@ interface Props {
   rowEnd?: boolean;
   overflowLeft?: boolean;
   overflowRight?: boolean;
-  id?: string;
+  id?: number;
   color: string;
 }
 
@@ -15,7 +15,6 @@ function shadeColor(color: string, percent: number) {
   let R = parseInt(color.substring(1, 3), 16);
   let G = parseInt(color.substring(3, 5), 16);
   let B = parseInt(color.substring(5, 7), 16);
-
   R = Math.floor((R * (100 + percent)) / 100);
   G = Math.floor((G * (100 + percent)) / 100);
   B = Math.floor((B * (100 + percent)) / 100);
@@ -24,16 +23,16 @@ function shadeColor(color: string, percent: number) {
   G = G < 255 ? G : 255;
   B = B < 255 ? B : 255;
 
-  const RR = R.toString(16).length === 1 ? '0' + R.toString(16) : R.toString(16);
-  const GG = G.toString(16).length === 1 ? '0' + G.toString(16) : G.toString(16);
-  const BB = B.toString(16).length === 1 ? '0' + B.toString(16) : B.toString(16);
+  const RR = R.toString(16).length === 1 ? "0" + R.toString(16) : R.toString(16);
+  const GG = G.toString(16).length === 1 ? "0" + G.toString(16) : G.toString(16);
+  const BB = B.toString(16).length === 1 ? "0" + B.toString(16) : B.toString(16);
 
-  return '#' + RR + GG + BB;
+  return "#" + RR + GG + BB;
 }
 
-const CalendarNote: React.FC<Props> = ({ starting, ending, rowEnd, children, overflowLeft, overflowRight, id, color }) => {
+const Note: React.FC<Props> = ({ starting, ending, rowEnd, children, overflowLeft, overflowRight, id, color }) => {
   React.useEffect(() => {
-    const noteContainers = document.getElementsByClassName(id) as HTMLCollectionOf<HTMLElement>;
+    const noteContainers = document.getElementsByClassName(id.toString()) as HTMLCollectionOf<HTMLElement>;
     const collectionLength = noteContainers.length;
     function changeColor(color: string) {
       for (let i = 0; i < collectionLength; i++) {
@@ -64,7 +63,7 @@ const CalendarNote: React.FC<Props> = ({ starting, ending, rowEnd, children, ove
   );
 };
 
-const StyledCalendarNote = styled('div')<any>`
+const StyledCalendarNote = styled("div")<any>`
   position: relative;
   width: inherit;
   padding: 3px 10px;
@@ -72,8 +71,8 @@ const StyledCalendarNote = styled('div')<any>`
   margin: 3px 10px 0 10px;
   margin-right: ${props => props.overflowRight && 0};
   margin-left: ${props => props.overflowLeft && 0};
-  border-radius: ${props => (props.overflowRight ? '25px 0 0 25px' : props.overflowLeft ? '0 25px 25px 0' : '25px')};
-  border-radius: ${props => props.overflowRight && props.overflowLeft && '0px'};
+  border-radius: ${props => (props.overflowRight ? "25px 0 0 25px" : props.overflowLeft ? "0 25px 25px 0" : "25px")};
+  border-radius: ${props => props.overflowRight && props.overflowLeft && "0px"};
   display: flex;
   align-items: center;
   font-size: 1.2rem;
@@ -94,4 +93,4 @@ const Span = styled.span`
   white-space: nowrap;
 `;
 
-export default CalendarNote;
+export default Note;

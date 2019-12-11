@@ -9,11 +9,6 @@ export interface DayData {
 
 export interface DayDataRow extends Array<DayData> {}
 
-export interface Props {
-  month: Moment;
-  rows: any;
-}
-
 export interface CalendarEvent {
   holding: boolean;
   released: boolean;
@@ -23,7 +18,7 @@ export interface CalendarEvent {
   ending: Moment | null;
 }
 
-export interface CalendarNotes {
+export interface CalendarNote {
   beginning: Moment;
   ending: Moment;
   title: string;
@@ -32,4 +27,5 @@ export interface CalendarNotes {
   overflowRight: boolean;
   overflowLeft: boolean;
   color: string;
+  empty?: boolean;
 }

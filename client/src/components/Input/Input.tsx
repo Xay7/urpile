@@ -63,7 +63,6 @@ const StyledInput = styled('input')<any>`
   height: 40px;
   outline: none;
   padding: 0 20px;
-  margin: 15px 10px 15px 10px;
   border: 1px solid ${props => (props.border ? (props.error ? props.theme.error : '#D0D0D0') : 'transparent')};
   border-radius: 5px;
   box-sizing: border-box;

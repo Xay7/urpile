@@ -2,17 +2,17 @@ import React, { useRef, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Input from '../../components/Input/Input';
 import Button from '../../components/Button/Button';
-import moment, { Moment } from 'moment';
+import moment from 'moment';
 import axios from 'axios';
-import { CalendarNotes } from './types';
+import { CalendarNote } from './types';
 import { TwitterPicker } from 'react-color';
 import useClickOutside from '../../helpers/useClickOutside';
 
 interface Props {
   hide: () => void;
-  beginning: Moment;
-  ending: Moment;
-  success: (data) => void;
+  beginning: string;
+  ending: string;
+  success: (note: Array<CalendarNote>) => void;
 }
 
 const NoteForm: React.FC<Props> = ({ hide, beginning, ending, success }) => {
@@ -29,7 +29,6 @@ const NoteForm: React.FC<Props> = ({ hide, beginning, ending, success }) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (!beginning || !ending) {
       return;
     }
@@ -49,11 +48,11 @@ const NoteForm: React.FC<Props> = ({ hide, beginning, ending, success }) => {
         color
       });
       const res: any = await axios.get(`/users/${uuid}/calendarnotes`);
-      res.data.forEach((el: CalendarNotes) => {
+      res.data.forEach((el: CalendarNote) => {
         el.beginning = moment(el.beginning);
         el.ending = moment(el.ending);
       });
-      res.data.forEach((el: CalendarNotes) => {
+      res.data.forEach((el: CalendarNote) => {
         el.beginning = moment(el.beginning);
         el.ending = moment(el.ending);
       });
@@ -62,8 +61,8 @@ const NoteForm: React.FC<Props> = ({ hide, beginning, ending, success }) => {
     } catch (error) {}
   };
 
-  const colorHandler = color => {
-    setColor(color.hex);
+  const colorHandler = (color: string) => {
+    setColor(color);
   };
 
   useClickOutside(colorPickerRef, () => {
@@ -80,11 +79,16 @@ const NoteForm: React.FC<Props> = ({ hide, beginning, ending, success }) => {
         </span>
         {showColorPicker && (
           <ColorPicker ref={colorPickerRef}>
-            <TwitterPicker onChange={color => colorHandler(color)} color={color} />
+            <TwitterPicker onChange={color => colorHandler(color.hex)} color={color} />
           </ColorPicker>
         )}
         <Input type="text" placeholder="Title" ref={focusRef} error={emptyTitle} onChange={e => setTitle(e.target.value)}></Input>
       </Container>
+      <DateContainer>
+        <Date>{moment(beginning).format('DD MMMM')}</Date>
+        <span>&#8210;</span>
+        <Date>{moment(ending).format('DD MMMM')}</Date>
+      </DateContainer>
       <Container>
         <Button>Confirm</Button>
       </Container>
@@ -113,7 +117,7 @@ const Color = styled.div`
   }
   box-sizing: border-box;
   margin-left: 10px;
-  margin-right: 5px;
+  margin-right: 20px;
 `;
 
 const Container = styled.div`
@@ -126,8 +130,23 @@ const Container = styled.div`
 
 const ColorPicker = styled.div`
   position: absolute;
-  top: 86px;
-  left: 14px;
+  top: 76px;
+  left: 24px;
+`;
+
+const DateContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+  padding: 0 10px;
+  align-items: center;
+  margin: 15px 0px;
+`;
+
+const Date = styled.span`
+  font-size: 1.6rem;
+  margin: 0 10px;
 `;
 
 export default NoteForm;

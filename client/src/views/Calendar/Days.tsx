@@ -2,8 +2,8 @@ import React, { useState, ReactChild, useEffect } from 'react';
 import styled from 'styled-components';
 import moment, { Moment } from 'moment';
 import { generateNotes } from './generateNotes';
-import CalendarNote from './CalendarNote';
-import { DayData, DayDataRow, CalendarEvent, CalendarNotes } from './types';
+import Note from './Note';
+import { DayData, DayDataRow, CalendarEvent, CalendarNote } from './types';
 import Tooltip from '../../components/Tooltip/Tooltip';
 import ConditionalWrap from '../../helpers/ConditionalWrap';
 import NoteForm from './NoteForm';
@@ -23,7 +23,7 @@ const Days: React.FC<Props> = ({ rows }) => {
     beginning: null,
     ending: null
   });
-  const [calendarNotes, setCalendarNotes] = useState<Array<CalendarNotes>>([]);
+  const [calendarNotes, setCalendarNotes] = useState<Array<CalendarNote>>([]);
   const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ const Days: React.FC<Props> = ({ rows }) => {
 
       try {
         const res: any = await axios.get(`/users/${uuid}/calendarnotes`);
-        res.data.forEach((el: CalendarNotes) => {
+        res.data.forEach((el: CalendarNote) => {
           el.beginning = moment(el.beginning);
           el.ending = moment(el.ending);
         });
@@ -62,36 +62,22 @@ const Days: React.FC<Props> = ({ rows }) => {
     setShowForm(true);
   };
 
-  const addEvent = notes => {
+  const addEvent = (notes: Array<CalendarNote>) => {
     setCalendarNotes(notes);
   };
 
   const hideForm = () => {
     setShowForm(false);
   };
+
   const constructedDays = rows.map((row: DayDataRow, rowIndex: number) => {
-    const currentWeekNotes = calendarNotes.filter((el: CalendarNotes) => {
+    const currentWeekNotes = calendarNotes.filter((el: CalendarNote) => {
       return moment(el.beginning).isBetween(moment(row[0].day), moment(row[6].day), 'days', '[]');
     });
     const notes = generateNotes(row, rowIndex, currentWeekNotes);
-    const hiddenNotes = [0, 0, 0, 0, 0, 0, 0];
-
-    const noteLimit = 3;
-
-    if (notes.length > noteLimit) {
-      for (let i = noteLimit; i <= notes.length - 1; i++) {
-        for (let y = 0; y <= notes[i].length - 1; y++) {
-          if (notes[i][y].id) {
-            hiddenNotes[y]++;
-          }
-        }
-      }
-      notes.splice(noteLimit, notes.length);
-    }
-    const isHiddenEmpty = hiddenNotes.every(v => v === hiddenNotes[0]);
 
     return (
-      <Row key={rowIndex}>
+      <Container key={rowIndex}>
         <RowBackgrounds>
           {row.map((day: DayData) => {
             return (
@@ -161,21 +147,21 @@ const Days: React.FC<Props> = ({ rows }) => {
             </thead>
             <tbody>
               <React.Fragment key={rowIndex}>
-                {notes &&
-                  notes.map((el, ind: number) => {
+                {notes.filledRow &&
+                  notes.filledRow.map((el: Array<CalendarNote>, ind: number) => {
                     return (
                       <tr key={ind}>
-                        {[...el].map((note, ind) => {
+                        {[...el].map((note: CalendarNote, ind: number) => {
                           return (
                             <td key={ind} colSpan={note.colSpan} style={{ verticalAlign: 'top' }}>
                               {!note.empty && (
-                                <CalendarNote
+                                <Note
                                   id={note.id}
                                   overflowRight={note.overflowRight ? note.overflowRight : false}
                                   overflowLeft={note.overflowLeft ? note.overflowLeft : false}
                                   color={note.color}>
                                   {note.title && note.title}
-                                </CalendarNote>
+                                </Note>
                               )}
                             </td>
                           );
@@ -183,27 +169,48 @@ const Days: React.FC<Props> = ({ rows }) => {
                       </tr>
                     );
                   })}
-                {!isHiddenEmpty && (
-                  <tr>
-                    {hiddenNotes.map((el, index) => {
-                      return (
-                        <td colSpan={1} key={index}>
-                          {el > 0 && <HiddenNotes>+{el}</HiddenNotes>}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                )}
+                <tr>
+                  {notes.hiddenNotes.map((el: number, index: number) => {
+                    return (
+                      <td colSpan={1} key={index}>
+                        {el > 0 && (
+                          <HiddenNotes>
+                            +{el} {el === 1 ? 'note' : 'notes'}
+                          </HiddenNotes>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
               </React.Fragment>
             </tbody>
           </Table>
         </RowDays>
-      </Row>
+      </Container>
     );
   });
 
-  return <>{constructedDays}</>;
+  return (
+    <>
+      <DaysContainer>{constructedDays}</DaysContainer>
+    </>
+  );
 };
+
+const DaysContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1 0;
+  overflow: hidden;
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex: 1 0;
+  flex-direction: column;
+  position: relative;
+  transition: 0.5s all;
+`;
 
 const Table = styled.table`
   width: 100%;
@@ -233,13 +240,6 @@ const DaySpan = styled('div')<any>`
   margin-bottom: 2px;
 `;
 
-const Row = styled.div`
-  display: flex;
-  flex: 1 0;
-  flex-direction: column;
-  position: relative;
-`;
-
 const RowBackground = styled('div')<any>`
   flex: 1 0;
   color: ${props => (props.fillerDay ? '#ccc' : props.today ? 'blue' : 'black')};
@@ -266,7 +266,7 @@ const RowDays = styled.div``;
 const HiddenNotes = styled.div`
   text-align: center;
   margin: 3px 0;
-  color: red;
+  color: ${props => props.theme.primary};
 `;
 
 export default Days;

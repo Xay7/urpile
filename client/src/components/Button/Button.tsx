@@ -9,7 +9,7 @@ interface Props {
 }
 
 const Button: React.FC<Props> = ({ style, onClick, children, disabled, size }) => {
-  let [width, height, fontSize, padding] = ['calc(100% - 20px)', '38px', '1.8rem', '8px 16px'];
+  let [width, height, fontSize, padding] = ['calc(100% - 20px)', '38px', '1.6rem', '8px 16px'];
 
   if (size === 'sm') {
     width = '80px';
@@ -28,8 +28,7 @@ const Button: React.FC<Props> = ({ style, onClick, children, disabled, size }) =
 };
 
 const StyledButton = styled('button')<any>`
-  width: ${props => props.width};
-  margin: 10px;
+  width: auto;
   height: ${props => props.height};
   border: none;
   padding: ${props => props.padding};

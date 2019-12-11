@@ -15,18 +15,20 @@ const Weekdays: React.FC = () => {
 const DaysHeader = styled.div`
   height: 45px;
   display: flex;
-  margin: 5px 0;
+  padding: 5px 0s;
 `;
 
 const Header = styled.div`
   color: ${props => props.theme.primary};
   background-color: ${props => props.theme.white};
-  font-size: 1.6rem;
+  font-size: 1.7rem;
+  letter-spacing: 1px;
   display: flex;
   flex: 1 0;
   align-items: center;
   justify-content: center;
   font-weight: 700;
+  text-transform: capitalize;
 `;
 
 export default Weekdays;

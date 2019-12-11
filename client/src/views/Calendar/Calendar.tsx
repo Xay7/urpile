@@ -1,25 +1,25 @@
-import React, { useState, useEffect, useRef } from 'react';
-import moment, { Moment } from 'moment';
-import styled from 'styled-components';
-import Icon from '../../components/Icon/Icon';
-import Weekdays from './Weekdays';
-import Days from './Days';
-import { DayDataRow } from './types';
+import React, { useState, useEffect, useRef } from "react";
+import moment, { Moment } from "moment";
+import styled from "styled-components";
+import Icon from "../../components/Icon/Icon";
+import Weekdays from "./Weekdays";
+import Days from "./Days";
+import { DayDataRow } from "./types";
 
 const Calendar: React.FC = () => {
   const [date, setDate] = useState<Moment>(moment());
   const [width, setWidth] = useState(null);
   const ref = useRef(null);
-  const firstDayOfMonth = date.startOf('month').isoWeekday() - 2;
+  const firstDayOfMonth = date.startOf("month").isoWeekday() - 2;
   const daysInMonth = +moment(date).daysInMonth();
   const days: DayDataRow = [];
   const rows: Array<DayDataRow> = [];
   let cells: DayDataRow = [];
   const isToday = day => {
-    if (!moment(day).isSame(moment(), 'day')) {
+    if (!moment(day).isSame(moment(), "day")) {
       return;
     }
-    return +moment(day).format('D');
+    return +moment(day).format("D");
   };
 
   useEffect(() => {
@@ -76,37 +76,47 @@ const Calendar: React.FC = () => {
     }
   });
 
+  // Animate on click button and revert after 3000ms.
+
   const nextMonth = () => {
-    setDate(moment(date).add(1, 'month'));
+    setDate(moment(date).add(1, "month"));
   };
 
   const previousMonth = () => {
-    setDate(moment(date).subtract(1, 'month'));
+    setDate(moment(date).subtract(1, "month"));
   };
   return (
-    <Container ref={ref} width={width}>
-      <Month>
-        <Icon name="left" onClick={previousMonth} />
-        <h4 style={{ margin: '0 auto' }}>{moment(date).format('MMMM YYYY')}</h4>
-        <Icon name="right" onClick={nextMonth} />
-      </Month>
-      <DaysContainer>
+    <Container>
+      <Calendarr ref={ref} width={width}>
+        <Month>
+          <Icon name="left" onClick={previousMonth} />
+          <CurrentDate>{moment(date).format("MMMM YYYY")}</CurrentDate>
+          <Icon name="right" onClick={nextMonth} />
+        </Month>
         <Weekdays />
         <Days month={date} rows={rows} />
-      </DaysContainer>
+      </Calendarr>
     </Container>
   );
 };
 
-const Container = styled('div')<any>`
+const Calendarr = styled("div")<any>`
   height: 100%;
-  width: ${props => props.width + 'px'};
-  box-shadow: ${props => props.theme.shadows['1dp']};
+  box-shadow: ${props => props.theme.shadows["1dp"]};
   display: flex;
   flex-direction: column;
-  flex: 0 1;
   background-color: ${props => props.theme.white};
   border-radius: 5px;
+  flex-basis: ${props => props.width + "px"};
+  flex-grow: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+`;
+
+const Container = styled.div`
+  height: 100%;
+  width: 100%;
+  display: flex;
 `;
 
 const Month = styled.div`
@@ -123,11 +133,8 @@ const Month = styled.div`
   text-transform: capitalize;
 `;
 
-const DaysContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1 0;
-  z-index: 1;
+const CurrentDate = styled.h4`
+  margin: 0 auto;
 `;
 
 export default Calendar;

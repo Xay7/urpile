@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import axios from 'axios';
-
+import Loader from '../../Loader/Loader';
 const authenticate = async () => {
   try {
     const res = await axios.get('/users/dashboard');
@@ -35,8 +35,13 @@ const PrivateRouteFunctional: React.FC<any> = ({ component: Component, ...rest }
   }, []);
 
   if (state.loading) {
-    return <div>LOADING</div>;
-  } else return <Route {...rest} render={props => (state.isAuthenticated === true ? <Component {...props} /> : <Redirect to="/login" />)} />;
+    return (
+      <div style={{ width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Loader></Loader>
+      </div>
+    );
+  } else
+    return <Route {...rest} render={props => (state.isAuthenticated === true ? <Component {...props} /> : <Redirect to="/login" />)} />;
 };
 
 export default PrivateRouteFunctional;

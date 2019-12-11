@@ -1,14 +1,14 @@
-import React from "react";
-import styled from "styled-components";
-import axios from "axios";
-import { NavLink } from "react-router-dom";
-import { ReactComponent as Calendar } from "../../assets/svg/calendar.svg";
-import { ReactComponent as Key } from "../../assets/svg/key.svg";
-import { ReactComponent as Notepad } from "../../assets/svg/notepad.svg";
-import { ReactComponent as Dashboard } from "../../assets/svg/dashboard.svg";
-import { ReactComponent as Logout } from "../../assets/svg/logout.svg";
-import { ReactComponent as Cog } from "../../assets/svg/cog.svg";
-import { useHistory } from "react-router-dom";
+import React from 'react';
+import styled from 'styled-components';
+import axios from 'axios';
+import { NavLink } from 'react-router-dom';
+import { ReactComponent as Calendar } from '../../assets/svg/calendar.svg';
+import { ReactComponent as Key } from '../../assets/svg/key.svg';
+import { ReactComponent as Notepad } from '../../assets/svg/notepad.svg';
+import { ReactComponent as Dashboard } from '../../assets/svg/dashboard.svg';
+import { ReactComponent as Logout } from '../../assets/svg/logout.svg';
+import { ReactComponent as Cog } from '../../assets/svg/cog.svg';
+import { useHistory } from 'react-router-dom';
 
 const iconTypes = {
   calendar: Calendar,
@@ -23,11 +23,11 @@ const Navbar: React.FC = props => {
   const history = useHistory();
   const handleLogout = async () => {
     try {
-      await axios.post("/users/logout");
-      history.push("/");
+      await axios.post('/users/logout');
+      history.push('/');
     } catch (error) {
-      history.push("/");
-      console.log("Error while logging out");
+      history.push('/');
+      console.log('Error while logging out');
     }
   };
   return (
@@ -66,7 +66,7 @@ const Item: React.FC<any> = ({ children, icon, selected, ...rest }) => {
   return (
     <StyledItem>
       <StyledNavLink {...rest}>
-        <Icon style={{ width: "24px", height: "24px" }} />
+        <Icon style={{ width: '24px', height: '24px' }} />
         <Text>{children}</Text>
       </StyledNavLink>
     </StyledItem>
@@ -82,7 +82,10 @@ const StyledNavbar = styled.nav`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  box-shadow: ${props => props.theme.shadows["1dp"]};
+  box-shadow: ${props => props.theme.shadows['1dp']};
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const SectionName = styled.span`
@@ -91,7 +94,7 @@ const SectionName = styled.span`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  color: #bbb;
+  color: #484848;
   font-size: 1.3rem;
   text-transform: uppercase;
 `;

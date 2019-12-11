@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import Input from "../../components/Input/Input";
-import Button from "../../components/Button/Button";
-import Checkbox from "../../components/Checkbox/Checkbox";
-import axios from "axios";
-import { useHistory, RouteComponentProps, Link } from "react-router-dom";
-import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import Input from '../../components/Input/Input';
+import Button from '../../components/Button/Button';
+import Checkbox from '../../components/Checkbox/Checkbox';
+import axios from 'axios';
+import { useHistory, RouteComponentProps, Link } from 'react-router-dom';
+import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 
 const Login: React.FC<RouteComponentProps> = props => {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const history = useHistory();
 
   const formHandler = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
@@ -19,13 +19,13 @@ const Login: React.FC<RouteComponentProps> = props => {
     const remember = (e.currentTarget[2] as HTMLInputElement).checked;
 
     try {
-      await axios.post("/users/login", { email, password, remember: remember });
+      await axios.post('/users/login', { email, password, remember: remember });
       if (remember) {
-        localStorage.setItem("remember", "true");
+        localStorage.setItem('remember', 'true');
       }
-      history.push("/dashboard");
+      history.push('/dashboard');
     } catch (error) {
-      let errorMessage = "Something went wrong";
+      let errorMessage = 'Something went wrong';
       if (error.response && error.response.data) {
         errorMessage = error.response.data;
       }
@@ -41,20 +41,16 @@ const Login: React.FC<RouteComponentProps> = props => {
         <Form onSubmit={formHandler}>
           <Input type="email" placeholder="Email" autoComplete="email" error={error} />
           <Input type="password" placeholder="Password" autoComplete="password" error={error} />
-          <Checkbox
-            checked={checkboxChecked}
-            onChange={() => setCheckboxChecked(!checkboxChecked)}
-            label={"Remember me"}
-          />
+          <Checkbox checked={checkboxChecked} onChange={() => setCheckboxChecked(!checkboxChecked)} label={'Remember me'} />
           <Button>Continue</Button>
           {props.location.state && props.location.state.registered && (
             <RegisterSuccessMessage>Registration complete, you can now login</RegisterSuccessMessage>
           )}
         </Form>
       </Container>
-      <span style={{ fontSize: "1.3rem", margin: "10px" }}>
+      <span style={{ fontSize: '1.3rem', margin: '10px' }}>
         Don&apos;t have an account?&nbsp;
-        <Link to="/register" style={{ textDecoration: "none", color: "#0984e3" }}>
+        <Link to="/register" style={{ textDecoration: 'none', color: '#0984e3' }}>
           Sign up
         </Link>
       </span>
@@ -76,9 +72,9 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: ${props => props.theme.white};
-  padding: 0 30px 24px 30px;
+  padding: 30px 35px;
   width: 280px;
-  box-shadow: ${props => props.theme.shadows["3dp"]};
+  box-shadow: ${props => props.theme.shadows['3dp']};
 `;
 
 const Form = styled.form`
@@ -88,6 +84,14 @@ const Form = styled.form`
   justify-content: center;
   width: 100%;
 
+  input {
+    margin: 12px;
+  }
+
+  button {
+    margin-top: 10px;
+  }
+
   label {
     align-self: flex-start;
   }
@@ -95,8 +99,7 @@ const Form = styled.form`
 
 const Header = styled.h3`
   font-size: 2.4rem;
-  margin-bottom: 9px;
-  margin-top: 20px;
+  margin-bottom: 12px;
 `;
 
 const RegisterSuccessMessage = styled.span`

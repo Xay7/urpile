@@ -6,6 +6,10 @@ export const getNotes: RequestHandler = async (req, res) => {
   const { uid } = req.session!;
 
   const response = await db
+    .query('SELECT id,title,beginning,ending,color FROM notes WHERE uid = $1 order by created_at asc', [uid])
+    .catch(error(500, 'Database error'));
+
+  const test = await db
     .query('SELECT id,title,beginning,ending,color FROM notes WHERE uid = $1', [uid])
     .catch(error(500, 'Database error'));
 
@@ -14,7 +18,6 @@ export const getNotes: RequestHandler = async (req, res) => {
 
 export const postNote: RequestHandler = async (req, res) => {
   const { uid } = req.session!;
-
   const { title, beginning, ending, color } = req.body;
 
   if (!title || !beginning || !ending) {

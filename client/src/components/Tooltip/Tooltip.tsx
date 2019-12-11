@@ -62,6 +62,7 @@ const Tooltip: React.FC<Props> = ({ position, children, component }) => {
     }
 
     setTooltipPosition({ x: x, y: y });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [windowWidth]);
 
   useClickOutside(tooltipRef, () => {

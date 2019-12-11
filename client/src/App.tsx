@@ -57,6 +57,10 @@ const Main = styled.main`
   padding: 30px;
   margin-left: 240px;
   box-sizing: border-box;
+  @media (max-width: 768px) {
+    margin: 0;
+    padding: 20px;
+  }
 `;
 
 export default App;
